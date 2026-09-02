@@ -22,7 +22,7 @@ def main():
     print("✨ Press Ctrl+C to stop the server.")
     print("=" * 60)
 
-    uvicorn.run("backend.app:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("backend.app.main:app", host="127.0.0.1", port=8000, reload=True)
 
 if __name__ == "__main__":
     main()

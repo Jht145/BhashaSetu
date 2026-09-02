@@ -1,9 +1,10 @@
+import time
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
-from app.main import app
-from app.core.database import init_db
-from scripts.seed_data import seed
+from backend.app.main import app
+from backend.app.core.database import init_db
+from backend.scripts.seed_data import seed
 
 
 @pytest_asyncio.fixture(autouse=True)
@@ -21,6 +22,46 @@ async def test_health_endpoint():
     data = response.json()
     assert data["status"] == "healthy"
     assert data["project_code"] == "SIH26042"
+
+
+@pytest.mark.asyncio
+async def test_web_frontend_languages():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.get("/api/languages")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["count"] == 9
+    assert data["tribal_count"] == 5
+    assert data["regional_count"] == 4
+
+
+@pytest.mark.asyncio
+async def test_web_frontend_translate():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.post(
+            "/api/translate",
+            json={
+                "text": "नमस्ते",
+                "target_language": "santhali",
+                "source_language": "hin_Deva"
+            }
+        )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert "ᱡᱚᱦᱟᱨ" in data["native_script"]
+
+
+@pytest.mark.asyncio
+async def test_web_frontend_dictionary():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.get("/api/dictionary?category=nature")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total"] > 0
 
 
 @pytest.mark.asyncio
@@ -87,9 +128,6 @@ async def test_speech_duplex_translation():
     assert data["latency_ms"] < 2000.0  # NFR requirement < 2.0s
 
 
-import time
-
-
 @pytest.mark.asyncio
 async def test_offline_package_compilation():
     unique_id = f"TEST_G1_MATH_SAT_{int(time.time() * 1000)}"
@@ -121,3 +159,12 @@ async def test_analytics_summary():
     data = response.json()
     assert "kpis" in data
     assert "teacher_adoption_rate" in data["kpis"]
+
+
+@pytest.mark.asyncio
+async def test_frontend_static_serving():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.get("/")
+    assert response.status_code == 200
+    assert "भाषा" in response.text or "BhashaSetu" in response.text
