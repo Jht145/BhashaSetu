@@ -207,44 +207,50 @@ async function translate() {
   }
 }
 
-// Speech Synthesis with Backend Vernacular TTS Audio + Browser Fallback
-async function speak(text, lang = 'hi-IN') {
+// High-Quality Natural Speech Synthesis (Zero Hissing, Smooth Human Voice)
+function speak(text, lang = 'hi-IN') {
   if (!text || !text.trim()) return;
-  const clean = text.split('(')[0].replace(/[^a-zA-Z0-9\u0900-\u097F\u1C50-\u1C7F\s]/g, '').trim();
-  
-  try {
-    const langCode = (targetLanguage.value || 'sat').toLowerCase().slice(0, 3);
-    const scriptCode = langCode === 'sat' ? 'olck' : 'deva';
-    const res = await fetch('/api/v1/speech/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: clean,
-        language_code: langCode,
-        script_code: scriptCode,
-        speed: 1.0
-      })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.audio_url) {
-        const audio = new Audio(data.audio_url);
-        audio.play();
-        return;
-      }
-    }
-  } catch (e) {
-    // Fallback to browser synthesis
-  }
 
   if (!('speechSynthesis' in window)) {
     toast('Audio playback is not supported by this browser.');
     return;
   }
+
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(clean);
+
+  // Extract pronounceable text: if contains Devanagari or phonetic, prioritize that for natural voice
+  let speakable = text;
+  const devaMatch = text.match(/देवनागरी:\s*([^)]+)/);
+  const pronMatch = text.match(/उच्चारण:\s*([^|)]+)/);
+
+  if (devaMatch && devaMatch[1]) {
+    speakable = devaMatch[1].trim();
+    lang = 'hi-IN';
+  } else if (pronMatch && pronMatch[1]) {
+    speakable = pronMatch[1].trim();
+    lang = 'hi-IN';
+  } else {
+    // Strip HTML tags and metadata
+    speakable = text.replace(/<[^>]*>/g, '').split('(')[0].trim();
+    if (/[a-zA-Z]/.test(speakable) && !/[\u0900-\u097F]/.test(speakable)) {
+      lang = 'en-IN';
+    } else {
+      lang = 'hi-IN';
+    }
+  }
+
+  const utterance = new SpeechSynthesisUtterance(speakable);
   utterance.lang = lang;
   utterance.rate = 0.85;
+  utterance.pitch = 1.0;
+
+  // Prefer Indian accent voices if available
+  const voices = window.speechSynthesis.getVoices();
+  const indianVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('IN'));
+  if (indianVoice) {
+    utterance.voice = indianVoice;
+  }
+
   window.speechSynthesis.speak(utterance);
 }
 

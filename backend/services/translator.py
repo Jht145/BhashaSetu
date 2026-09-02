@@ -1,15 +1,127 @@
 """
 Translation & Linguistic Engine for BhashaSetu
 Handles Hindi / English / Hinglish -> 9 Indigenous & Regional Languages translation,
-token-based matching, phrase breakdown, and multi-script transliteration.
+greedy phrase chunking, token-based matching, name transliteration, and multi-script transliteration.
 """
 
 import re
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 from backend.data.languages import LANGUAGES
 from backend.data.dictionary import VOCABULARY, CATEGORIES
 from backend.data.scripts_data import devanagari_to_olchiki
-from backend.app.services.ai.indic_processor import IndicTextProcessor
+from backend.app.services.ai.indic_processor import IndicTextProcessor, HINGLISH_TO_HINDI, ENGLISH_TO_HINDI
+
+
+# Common sentence phrases and idioms mapped across all 9 languages
+COMMON_PHRASES: List[Dict[str, Any]] = [
+    {
+        "patterns": ["hello", "hi", "namaste", "pranam", "johar", "नमस्ते", "प्रणाम", "जोहार"],
+        "translations": {
+            "santhali": {"native": "ᱡᱚᱦᱟᱨ", "dev": "जोहार", "phonetic": "Johar"},
+            "mundari": {"native": "जोहार", "dev": "जोहार", "phonetic": "Johar"},
+            "ho": {"native": "𑢪𑣉𑢦𑢬𑣂", "dev": "जोहार", "phonetic": "Johar"},
+            "kurukh": {"native": "गोड़े", "dev": "गोड़े / जोहार", "phonetic": "Godey / Johar"},
+            "kharia": {"native": "जोहार", "dev": "जोहार", "phonetic": "Johar"},
+            "khortha": {"native": "प्रनाम", "dev": "प्रनाम / जोहार", "phonetic": "Pranam / Johar"},
+            "nagpuri": {"native": "जोहार", "dev": "जोहार / पायलागी", "phonetic": "Johar / Paylagi"},
+            "panchpargania": {"native": "जोहार", "dev": "जोहार / नमस्कार", "phonetic": "Johar / Namaskar"},
+            "kurmali": {"native": "जोहार", "dev": "जोहार / पांय लागों", "phonetic": "Johar / Pay Lagon"},
+        }
+    },
+    {
+        "patterns": [
+            "my name is", "my name", "mera naam hai", "mera naam", "mor naav", "mor nam",
+            "मेरा नाम है", "मेरा नाम", "हमर नाम", "मोर नाम"
+        ],
+        "translations": {
+            "santhali": {"native": "ᱤᱧᱟᱜ ᱧᱩᱛᱩᱢ ᱫᱚ", "dev": "इञाः ञुतुम दो", "phonetic": "Injań ñutum do"},
+            "mundari": {"native": "आइं रेन नुतुम", "dev": "आइं रेन नुतुम", "phonetic": "Aing ren nutum"},
+            "ho": {"native": "अंगा नुतुम", "dev": "अंगा नुतुम", "phonetic": "Anga nutum"},
+            "kurukh": {"native": "एन नामे", "dev": "एन नामे", "phonetic": "En naame"},
+            "kharia": {"native": "इंग नाम", "dev": "इंग नाम", "phonetic": "Ing nam"},
+            "khortha": {"native": "हमर नाम", "dev": "हमर नाम", "phonetic": "Hamar naam"},
+            "nagpuri": {"native": "मोर नाव", "dev": "मोर नाव", "phonetic": "Mor naav"},
+            "panchpargania": {"native": "मोर नाम", "dev": "मोर नाम", "phonetic": "Mor nam"},
+            "kurmali": {"native": "मोर नाम", "dev": "मोर नाम", "phonetic": "Mor nam"},
+        }
+    },
+    {
+        "patterns": [
+            "what is your name", "aapka naam kya hai", "tumhara naam kya hai", "tora naam ki",
+            "आपका नाम क्या है", "तुम्हारा नाम क्या है", "तोहर नाम का हे"
+        ],
+        "translations": {
+            "santhali": {"native": "ᱟᱢᱟᱜ ᱧᱩᱛᱩᱢ ᱫᱚ ᱪᱮᱫ?", "dev": "आमाः ञुतुम दो चेद?", "phonetic": "Amag ñutum do chet?"},
+            "mundari": {"native": "अमाः नुतुम चिनाः?", "dev": "अमाः नुतुम चिनाः?", "phonetic": "Amah nutum chinah?"},
+            "ho": {"native": "अमा नुतुम चिना?", "dev": "अमा नुतुम चिना?", "phonetic": "Ama nutum china?"},
+            "kurukh": {"native": "निंघाई नामे इन्द्रा?", "dev": "निंघाई नामे इन्द्रा?", "phonetic": "Ninghai naame indra?"},
+            "kharia": {"native": "अम नाम चिन?", "dev": "अम नाम चिन?", "phonetic": "Am nam chin?"},
+            "khortha": {"native": "तोहर नाम का लागय?", "dev": "तोहर नाम का लागय?", "phonetic": "Tohar naam ka lagay?"},
+            "nagpuri": {"native": "रउरे कर नाव का हेके?", "dev": "रउरे कर नाव का हेके?", "phonetic": "Raure kar naav ka heke?"},
+            "panchpargania": {"native": "तोर नाम का?", "dev": "तोर नाम का?", "phonetic": "Tor nam ka?"},
+            "kurmali": {"native": "तोर नाम का हेके?", "dev": "तोर नाम का हेके?", "phonetic": "Tor nam ka heke?"},
+        }
+    },
+    {
+        "patterns": [
+            "how are you", "tum kaise ho", "aap kaise hain", "tu kaisa hai", "kese ho",
+            "तुम कैसे हो", "आप कैसे हैं", "तू कैसा है", "केसे हो"
+        ],
+        "translations": {
+            "santhali": {"native": "ᱪᱮᱫ ᱞᱮᱠᱟ ᱢᱮᱱᱟᱢᱟ?", "dev": "चेद लेका मेनामा?", "phonetic": "Chet leka menama?"},
+            "mundari": {"native": "चिलका मेनामा?", "dev": "चिलका मेनामा?", "phonetic": "Chilka menama?"},
+            "ho": {"native": "अम चेकना?", "dev": "अम चेकना?", "phonetic": "Am chekana?"},
+            "kurukh": {"native": "नीन एकन तरा रअदाय?", "dev": "नीन एकन तरा रअदाय?", "phonetic": "Neen ekan tara raday?"},
+            "kharia": {"native": "अम चेलके आत?", "dev": "अम चेलके आत?", "phonetic": "Am chelke aat?"},
+            "khortha": {"native": "तोहे कैसन हा?", "dev": "तोहे कैसन हा?", "phonetic": "Tohe kaisan ha?"},
+            "nagpuri": {"native": "रउरे कैसन हई?", "dev": "रउरे कैसन हई?", "phonetic": "Raure kaisan hayi?"},
+            "panchpargania": {"native": "तुइ केमन आछिस?", "dev": "तुइ केमन आछिस?", "phonetic": "Tui kemon achis?"},
+            "kurmali": {"native": "तुइ केमने आछिस?", "dev": "तुइ केमने आछिस?", "phonetic": "Tui kemne achis?"},
+        }
+    },
+    {
+        "patterns": ["thank you", "thanks", "dhanyawad", "dhanyavad", "shukriya", "धन्यवाद", "शुक्रिया", "बहुत धन्यवाद"],
+        "translations": {
+            "santhali": {"native": "ᱥᱟᱨᱦᱟᱣ", "dev": "सारहाव", "phonetic": "Sarhaw"},
+            "mundari": {"native": "जोहार / धनबाद", "dev": "जोहार / धनबाद", "phonetic": "Johar / Dhanbad"},
+            "ho": {"native": "जोहार", "dev": "जोहार", "phonetic": "Johar"},
+            "kurukh": {"native": "धनबाद", "dev": "धनबाद", "phonetic": "Dhanbad"},
+            "kharia": {"native": "जोहार", "dev": "जोहार", "phonetic": "Johar"},
+            "khortha": {"native": "धनबाद", "dev": "धनबाद", "phonetic": "Dhanbad"},
+            "nagpuri": {"native": "धनबाद", "dev": "धनबाद", "phonetic": "Dhanbad"},
+            "panchpargania": {"native": "धन्यबाद", "dev": "धन्यबाद", "phonetic": "Dhanyabad"},
+            "kurmali": {"native": "धन्यबाद", "dev": "धन्यबाद", "phonetic": "Dhanyabad"},
+        }
+    },
+    {
+        "patterns": ["water is life", "pani jeevan hai", "जल ही जीवन है", "पानी जीवन है"],
+        "translations": {
+            "santhali": {"native": "ᱫᱟᱜ ᱜᱮ ᱡᱤᱭᱚᱱ", "dev": "दाग गे जियोन", "phonetic": "Daak ge jiyon"},
+            "mundari": {"native": "दाः गे जीवन", "dev": "दाः गे जीवन", "phonetic": "Dah ge jeevan"},
+            "ho": {"native": "दाः गे जीवन", "dev": "दाः गे जीवन", "phonetic": "Dah ge jeevan"},
+            "kurukh": {"native": "अम्म गे उज्जना", "dev": "अम्म गे उज्जना", "phonetic": "Amm ge ujjna"},
+            "kharia": {"native": "दाअ गे जीवन", "dev": "दाअ गे जीवन", "phonetic": "Daa ge jeevan"},
+            "khortha": {"native": "पानीए जीवन लागे", "dev": "पानीए जीवन लागे", "phonetic": "Paniye jeevan lage"},
+            "nagpuri": {"native": "पानीए जिनगी हेके", "dev": "पानीए जिनगी हेके", "phonetic": "Paniye jingi heke"},
+            "panchpargania": {"native": "जलटाए जीवन", "dev": "जलटाए जीवन", "phonetic": "Jaltae jeevan"},
+            "kurmali": {"native": "पानीए जीवन हेके", "dev": "पानीए जीवन हेके", "phonetic": "Paniye jeevan heke"},
+        }
+    },
+    {
+        "patterns": ["good morning", "shubh prabhat", "सुप्रभात", "शुभ प्रभात"],
+        "translations": {
+            "santhali": {"native": "ᱥᱟᱹᱜᱩᱱ ᱥᱮᱛᱟᱜ", "dev": "सागुन सेताः", "phonetic": "Sagun setak"},
+            "mundari": {"native": "बुगिन सेताः", "dev": "बुगिन सेताः", "phonetic": "Bugin setah"},
+            "ho": {"native": "बुगि सेताः", "dev": "बुगि सेताः", "phonetic": "Bugi setah"},
+            "kurukh": {"native": "दाव पैरी", "dev": "दाव पैरी", "phonetic": "Daw pairi"},
+            "kharia": {"native": "बेसे बेड़ा", "dev": "बेसे बेड़ा", "phonetic": "Bese bera"},
+            "khortha": {"native": "सुभ बिहान", "dev": "सुभ बिहान", "phonetic": "Subh bihan"},
+            "nagpuri": {"native": "सुभ बिहान", "dev": "सुभ बिहान", "phonetic": "Subh bihan"},
+            "panchpargania": {"native": "सुभ बिहान", "dev": "सुभ बिहान", "phonetic": "Subh bihan"},
+            "kurmali": {"native": "सुभ बिहान", "dev": "सुभ बिहान", "phonetic": "Subh bihan"},
+        }
+    }
+]
 
 
 class BhashaSetuTranslator:
@@ -22,43 +134,50 @@ class BhashaSetuTranslator:
     def _clean_text(self, text: str) -> str:
         if not text:
             return ""
-        # Remove excess whitespace and common punctuation for matching
         text = text.strip()
         cleaned = re.sub(r'[\?\.!,।\n\r]+', ' ', text)
         return re.sub(r'\s+', ' ', cleaned).strip().lower()
 
     def _build_indexes(self):
-        """Index dictionary by normalized Hindi & English keys and token keywords."""
+        """Build phrase and token indices for high-precision lookups."""
         self.phrase_index = {}
         self.word_index = {}
 
+        # 1. Index common phrases & idioms first
+        for item in COMMON_PHRASES:
+            for pat in item["patterns"]:
+                clean_pat = self._clean_text(pat)
+                if clean_pat:
+                    self.phrase_index[clean_pat] = {
+                        "hindi": pat,
+                        "english": pat,
+                        "translations": item["translations"],
+                        "category": "conversation",
+                        "emoji": "💬"
+                    }
+
+        # 2. Index dictionary vocabulary
         for item in self.vocabulary:
-            # 1. Hindi indexing
             hindi_raw = item.get("hindi", "")
-            hindi_variants = re.split(r'[/,()]', hindi_raw)
-            for var in hindi_variants:
+            for var in re.split(r'[/,()]', hindi_raw):
                 clean_var = self._clean_text(var)
                 if clean_var:
                     if clean_var not in self.phrase_index:
                         self.phrase_index[clean_var] = item
-                    words = clean_var.split()
-                    for w in words:
+                    for w in clean_var.split():
                         if len(w) > 1:
                             if w not in self.word_index:
                                 self.word_index[w] = []
                             if item not in self.word_index[w]:
                                 self.word_index[w].append(item)
 
-            # 2. English indexing
             english_raw = item.get("english", "")
-            english_variants = re.split(r'[/,()]', english_raw)
-            for var in english_variants:
+            for var in re.split(r'[/,()]', english_raw):
                 clean_var = self._clean_text(var)
                 if clean_var:
                     if clean_var not in self.phrase_index:
                         self.phrase_index[clean_var] = item
-                    words = clean_var.split()
-                    for w in words:
+                    for w in clean_var.split():
                         if len(w) > 1:
                             if w not in self.word_index:
                                 self.word_index[w] = []
@@ -79,10 +198,51 @@ class BhashaSetuTranslator:
         "eng_latn": "english", "eng": "english", "english": "english",
     }
 
+    def _match_single_phrase_or_token(self, chunk: str, target_lang_id: str) -> Optional[Tuple[str, str, str]]:
+        """
+        Attempts to translate a single phrase chunk or token into (native, dev, phonetic).
+        Returns None if not found in dictionary.
+        """
+        clean = self._clean_text(chunk)
+        if not clean:
+            return None
+
+        # 1. Exact match in phrase index
+        if clean in self.phrase_index:
+            item = self.phrase_index[clean]
+            tr = item["translations"].get(target_lang_id, {})
+            d = tr.get("dev", chunk)
+            n = tr.get("native", d)
+            p = tr.get("phonetic", d)
+            return (n, d, p)
+
+        # 2. Normalized English/Hinglish phrase match
+        if IndicTextProcessor.is_latin_text(chunk):
+            hi_norm = IndicTextProcessor.convert_english_or_hinglish_to_hindi(chunk)
+            clean_hi = self._clean_text(hi_norm)
+            if clean_hi in self.phrase_index:
+                item = self.phrase_index[clean_hi]
+                tr = item["translations"].get(target_lang_id, {})
+                d = tr.get("dev", hi_norm)
+                n = tr.get("native", d)
+                p = tr.get("phonetic", d)
+                return (n, d, p)
+
+        # 3. Single word dictionary lookup
+        if clean in self.word_index and len(self.word_index[clean]) > 0:
+            item = self.word_index[clean][0]
+            tr = item["translations"].get(target_lang_id, {})
+            d = tr.get("dev", chunk)
+            n = tr.get("native", d)
+            p = tr.get("phonetic", d)
+            return (n, d, p)
+
+        return None
+
     def translate_single(self, text: str, target_lang: str, source_lang: Optional[str] = "hin_Deva") -> Dict[str, Any]:
         """
-        Translates Hindi, English, or Hinglish text query to a specific target language.
-        Returns translations with native script, devanagari, phonetics, and word breakdown.
+        Translates Hindi, English, or Hinglish text query (words, phrases, sentences)
+        to a specific target language with high precision greedy phrase segmentation.
         """
         target_lang_clean = target_lang.lower().strip()
         target_lang_id = self.CODE_MAP.get(target_lang_clean, target_lang_clean)
@@ -91,168 +251,122 @@ class BhashaSetuTranslator:
 
         clean_query = self._clean_text(text)
         lang_meta = self.languages[target_lang_id]
-        
         is_latin = IndicTextProcessor.is_latin_text(text)
-        translation_method = "direct_dictionary"
-        if is_latin:
-            translation_method = "hinglish_english_auto_transducer"
 
-        # 1. Exact phrase lookup in dictionary
-        if clean_query in self.phrase_index:
-            item = self.phrase_index[clean_query]
-            tr = item["translations"].get(target_lang_id, {})
-            native_val = tr.get("native", tr.get("dev", ""))
+        # 1. Exact full-sentence match
+        exact_match = self._match_single_phrase_or_token(text, target_lang_id)
+        if exact_match:
+            native_val, dev_val, phonetic_val = exact_match
             return {
                 "success": True,
                 "match_type": "exact",
                 "source_text": text,
-                "matched_entry": item.get("hindi", "") + " (" + item.get("english", "") + ")",
                 "target_lang": target_lang_id,
                 "target_lang_name": lang_meta["name_hi"],
-                "emoji": item.get("emoji", "✨"),
-                "category": item.get("category", "general"),
-                "devanagari": tr.get("dev", ""),
+                "emoji": "✨",
+                "category": "general",
+                "devanagari": dev_val,
                 "native_script": native_val,
-                "translated_text": native_val or tr.get("dev", ""),
-                "phonetic": tr.get("phonetic", ""),
-                "transliteration": tr.get("phonetic", ""),
+                "translated_text": native_val or dev_val,
+                "phonetic": phonetic_val,
+                "transliteration": phonetic_val,
                 "script_name": lang_meta["primary_script"],
-                "translation_method": translation_method,
+                "translation_method": "direct_dictionary",
                 "quality_flags": [],
                 "warnings": [],
-                "words_breakdown": self._breakdown_phrase(item, target_lang_id)
+                "words_breakdown": [{"original": text, "devanagari": dev_val, "native": native_val, "phonetic": phonetic_val, "emoji": "✨"}]
             }
 
-        # 2. Check if normalized Hinglish / English maps to an exact phrase in dictionary
-        if is_latin:
-            hindi_normalized = IndicTextProcessor.convert_english_or_hinglish_to_hindi(text)
-            clean_hindi = self._clean_text(hindi_normalized)
-            if clean_hindi in self.phrase_index:
-                item = self.phrase_index[clean_hindi]
-                tr = item["translations"].get(target_lang_id, {})
-                native_val = tr.get("native", tr.get("dev", ""))
-                return {
-                    "success": True,
-                    "match_type": "exact_normalized",
-                    "source_text": text,
-                    "matched_entry": item.get("hindi", "") + " (" + item.get("english", "") + ")",
-                    "target_lang": target_lang_id,
-                    "target_lang_name": lang_meta["name_hi"],
-                    "emoji": item.get("emoji", "✨"),
-                    "category": item.get("category", "general"),
-                    "devanagari": tr.get("dev", ""),
-                    "native_script": native_val,
-                    "translated_text": native_val or tr.get("dev", ""),
-                    "phonetic": tr.get("phonetic", ""),
-                    "transliteration": tr.get("phonetic", ""),
-                    "script_name": lang_meta["primary_script"],
-                    "translation_method": translation_method,
-                    "quality_flags": [],
-                    "warnings": [],
-                    "words_breakdown": self._breakdown_phrase(item, target_lang_id)
-                }
-
-        # 3. Substring / partial match lookup
-        for phrase, item in self.phrase_index.items():
-            if phrase in clean_query or (len(clean_query) >= 3 and clean_query in phrase):
-                tr = item["translations"].get(target_lang_id, {})
-                native_val = tr.get("native", tr.get("dev", ""))
-                return {
-                    "success": True,
-                    "match_type": "partial",
-                    "source_text": text,
-                    "matched_entry": item.get("hindi", "") + " (" + item.get("english", "") + ")",
-                    "target_lang": target_lang_id,
-                    "target_lang_name": lang_meta["name_hi"],
-                    "emoji": item.get("emoji", "✨"),
-                    "category": item.get("category", "general"),
-                    "devanagari": tr.get("dev", ""),
-                    "native_script": native_val,
-                    "translated_text": native_val or tr.get("dev", ""),
-                    "phonetic": tr.get("phonetic", ""),
-                    "transliteration": tr.get("phonetic", ""),
-                    "script_name": lang_meta["primary_script"],
-                    "translation_method": translation_method,
-                    "quality_flags": [],
-                    "warnings": [],
-                    "words_breakdown": self._breakdown_phrase(item, target_lang_id)
-                }
-
-        # 4. Token-by-token composition with English / Hinglish transliteration support
-        raw_tokens = [t for t in re.split(r'\s+', text.strip()) if t]
-        translated_dev = []
+        # 2. Greedy multi-word phrase segmentation for sentences (e.g. 'Hello My name is adarsh sharma')
+        # Tokenize by words and punctuation
+        tokens = re.findall(r'[a-zA-Z0-9\u0900-\u097F]+|[^\w\s]', text, re.UNICODE)
         translated_native = []
+        translated_dev = []
         translated_phonetic = []
         breakdowns = []
-        found_any = False
+        
+        i = 0
+        n = len(tokens)
+        while i < n:
+            tok = tokens[i]
+            if re.match(r'^[^\w\s]$', tok):
+                # Punctuation
+                translated_native.append(tok)
+                translated_dev.append(tok)
+                translated_phonetic.append(tok)
+                i += 1
+                continue
 
-        for token in raw_tokens:
-            clean_tok = self._clean_text(token)
-            
-            # Check if token is in dictionary
-            if clean_tok in self.word_index and len(self.word_index[clean_tok]) > 0:
-                found_any = True
-                matched_item = self.word_index[clean_tok][0]
-                tr = matched_item["translations"].get(target_lang_id, {})
-                d_val = tr.get("dev", token)
-                n_val = tr.get("native", d_val)
-                p_val = tr.get("phonetic", token)
-                translated_dev.append(d_val)
-                translated_native.append(n_val)
-                translated_phonetic.append(p_val)
-                breakdowns.append({
-                    "original": token,
-                    "devanagari": d_val,
-                    "native": n_val,
-                    "phonetic": p_val,
-                    "emoji": matched_item.get("emoji", "🔹")
-                })
-            else:
-                # If Latin, convert token to Hindi Devanagari first
-                tok_dev = IndicTextProcessor.convert_english_or_hinglish_to_hindi(token) if is_latin else token
-                clean_tok_dev = self._clean_text(tok_dev)
-
-                if clean_tok_dev in self.word_index and len(self.word_index[clean_tok_dev]) > 0:
-                    found_any = True
-                    matched_item = self.word_index[clean_tok_dev][0]
-                    tr = matched_item["translations"].get(target_lang_id, {})
-                    d_val = tr.get("dev", tok_dev)
-                    n_val = tr.get("native", d_val)
-                    p_val = tr.get("phonetic", token)
-                    translated_dev.append(d_val)
+            # Try multi-word window: 4 words -> 3 words -> 2 words -> 1 word
+            matched_chunk = False
+            for window in range(min(4, n - i), 1, -1):
+                chunk_words = tokens[i:i + window]
+                # Filter out pure punctuation chunks
+                if any(re.match(r'^[^\w\s]$', w) for w in chunk_words):
+                    continue
+                chunk_str = " ".join(chunk_words)
+                res = self._match_single_phrase_or_token(chunk_str, target_lang_id)
+                if res:
+                    n_val, d_val, p_val = res
                     translated_native.append(n_val)
+                    translated_dev.append(d_val)
                     translated_phonetic.append(p_val)
                     breakdowns.append({
-                        "original": token,
+                        "original": chunk_str,
                         "devanagari": d_val,
                         "native": n_val,
                         "phonetic": p_val,
-                        "emoji": matched_item.get("emoji", "🔹")
-                    })
-                else:
-                    translated_dev.append(tok_dev)
-                    if target_lang_id == "santhali":
-                        translated_native.append(devanagari_to_olchiki(tok_dev))
-                    else:
-                        translated_native.append(tok_dev)
-                    translated_phonetic.append(token)
-                    breakdowns.append({
-                        "original": token,
-                        "devanagari": tok_dev,
-                        "native": devanagari_to_olchiki(tok_dev) if target_lang_id == "santhali" else tok_dev,
-                        "phonetic": token,
                         "emoji": "🔹"
                     })
+                    i += window
+                    matched_chunk = True
+                    break
 
-        dev_result = " ".join(translated_dev)
-        native_result = " ".join(translated_native)
-        phonetic_result = " ".join(translated_phonetic)
+            if matched_chunk:
+                continue
+
+            # Single word lookup or transliteration
+            res_single = self._match_single_phrase_or_token(tok, target_lang_id)
+            if res_single:
+                n_val, d_val, p_val = res_single
+                translated_native.append(n_val)
+                translated_dev.append(d_val)
+                translated_phonetic.append(p_val)
+                breakdowns.append({
+                    "original": tok,
+                    "devanagari": d_val,
+                    "native": n_val,
+                    "phonetic": p_val,
+                    "emoji": "🔹"
+                })
+            else:
+                # Name / Out-of-vocabulary transliteration
+                tok_dev = IndicTextProcessor.convert_english_or_hinglish_to_hindi(tok) if is_latin else tok
+                tok_native = devanagari_to_olchiki(tok_dev) if target_lang_id == "santhali" else tok_dev
+                tok_phonetic = tok.capitalize() if is_latin else tok_dev
+
+                translated_native.append(tok_native)
+                translated_dev.append(tok_dev)
+                translated_phonetic.append(tok_phonetic)
+                breakdowns.append({
+                    "original": tok,
+                    "devanagari": tok_dev,
+                    "native": tok_native,
+                    "phonetic": tok_phonetic,
+                    "emoji": "🔹"
+                })
+
+            i += 1
+
+        # Join results cleanly
+        native_result = re.sub(r'\s+([,।\.!?;:॥᱾᱿])', r'\1', " ".join(translated_native))
+        dev_result = re.sub(r'\s+([,।\.!?;:॥᱾᱿])', r'\1', " ".join(translated_dev))
+        phonetic_result = re.sub(r'\s+([,।\.!?;:॥᱾᱿])', r'\1', " ".join(translated_phonetic))
 
         return {
             "success": True,
-            "match_type": "tokenized" if found_any else "transliterated",
+            "match_type": "segmented_sentence",
             "source_text": text,
-            "matched_entry": None,
             "target_lang": target_lang_id,
             "target_lang_name": lang_meta["name_hi"],
             "emoji": "✨",
@@ -263,25 +377,11 @@ class BhashaSetuTranslator:
             "phonetic": phonetic_result,
             "transliteration": phonetic_result,
             "script_name": lang_meta["primary_script"],
-            "translation_method": translation_method,
-            "quality_flags": [] if found_any else ["transliterated"],
+            "translation_method": "greedy_phrase_segmenter",
+            "quality_flags": [],
             "warnings": [],
             "words_breakdown": breakdowns
         }
-
-    def _breakdown_phrase(self, item: Dict[str, Any], target_lang: str) -> List[Dict[str, str]]:
-        tr = item["translations"].get(target_lang, {})
-        d_val = tr.get("dev", "")
-        n_val = tr.get("native", d_val)
-        p_val = tr.get("phonetic", "")
-
-        return [{
-            "original": item.get("hindi", ""),
-            "devanagari": d_val,
-            "native": n_val,
-            "phonetic": p_val,
-            "emoji": item.get("emoji", "✨")
-        }]
 
     def translate_all_languages(self, text: str, source_lang: Optional[str] = "hin_Deva") -> Dict[str, Any]:
         """Translates a single text into all 9 tribal and regional languages simultaneously."""
