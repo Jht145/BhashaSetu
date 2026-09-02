@@ -241,6 +241,11 @@ async function translate() {
       const dev = data.devanagari;
 
       if (output) {
+        // Store for speech synthesis
+        translatedText.dataset.speakDeva = dev || '';
+        translatedText.dataset.speakPhonetic = phonetic || '';
+        translatedText.dataset.speakText = output;
+
         if (phonetic && phonetic !== output && (language === 'santhali' || language === 'sat')) {
           translatedText.innerHTML = `<span class="native-out" style="font-size: 1.15em; font-weight: 600;">${escapeHtml(output)}</span><br><small style="font-size: 0.85em; opacity: 0.85; display: inline-block; margin-top: 4px;">(उच्चारण: ${escapeHtml(phonetic)}${dev && dev !== output ? ' | देवनागरी: ' + escapeHtml(dev) : ''})</small>`;
         } else if (dev && dev !== output) {
@@ -265,51 +270,98 @@ async function translate() {
   const exact = (phrasebook[targetLanguage.value] && (phrasebook[targetLanguage.value][word] || phrasebook[targetLanguage.value][normKey])) || null;
 
   if (exact) {
+    translatedText.dataset.speakDeva = '';
+    translatedText.dataset.speakPhonetic = exact;
+    translatedText.dataset.speakText = exact;
     translatedText.textContent = exact;
     translatedText.classList.remove('placeholder');
     resultLabel.textContent = `In ${targetLanguage.value} ✨`;
     toast(`Wonderful! Here is your ${targetLanguage.value} word.`);
     beep();
   } else {
+    translatedText.dataset.speakDeva = '';
+    translatedText.dataset.speakPhonetic = word;
+    translatedText.dataset.speakText = `${word} (${targetLanguage.value})`;
     translatedText.textContent = `${word} (${targetLanguage.value})`;
     translatedText.classList.remove('placeholder');
     resultLabel.textContent = `In ${targetLanguage.value} ✨`;
   }
 }
 
-// High-Quality Natural Speech Synthesis (Zero Hissing, Smooth Human Voice)
-async function speak(text, lang = 'hi-IN') {
-  if (!text || !text.trim()) return;
+// High-Quality Reliable Speech Synthesis (Zero Hissing, Smooth Human Voice)
+let cachedVoices = [];
 
-  // Extract pronounceable text: if contains Devanagari or phonetic, prioritize that for natural voice
-  let speakable = text;
-  const devaMatch = text.match(/देवनागरी:\s*([^)]+)/);
-  const pronMatch = text.match(/उच्चारण:\s*([^|)]+)/);
+function loadVoices() {
+  if ('speechSynthesis' in window) {
+    cachedVoices = window.speechSynthesis.getVoices() || [];
+  }
+}
 
-  if (devaMatch && devaMatch[1]) {
-    speakable = devaMatch[1].trim();
-    lang = 'hi-IN';
-  } else if (pronMatch && pronMatch[1]) {
-    speakable = pronMatch[1].trim();
-    lang = 'hi-IN';
-  } else {
-    speakable = text.replace(/<[^>]*>/g, '').split('(')[0].trim();
-    if (/[a-zA-Z]/.test(speakable) && !/[\u0900-\u097F]/.test(speakable)) {
-      lang = 'en-IN';
-    } else {
-      lang = 'hi-IN';
-    }
+if ('speechSynthesis' in window) {
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+// Map vernacular Ol Chiki / Ho / tribal scripts to standard pronounceable phonetic words
+function getPronounceableText(rawText) {
+  if (!rawText) return { text: '', lang: 'hi-IN' };
+
+  // 1. Check data attributes from last translation
+  const devAttr = translatedText.dataset.speakDeva;
+  const phonAttr = translatedText.dataset.speakPhonetic;
+
+  if (devAttr && devAttr.trim()) {
+    return { text: devAttr.trim(), lang: 'hi-IN' };
+  }
+  if (phonAttr && phonAttr.trim() && /[a-zA-Z\u0900-\u097F]/.test(phonAttr)) {
+    return { text: phonAttr.replace(/[^a-zA-Z0-9\u0900-\u097F\s]/g, '').trim(), lang: /[\u0900-\u097F]/.test(phonAttr) ? 'hi-IN' : 'en-IN' };
   }
 
-  // 1. Try playing high-fidelity neural MP3 audio from backend TTS service
+  // 2. Extract Devanagari or Roman phonetics from HTML or text format
+  const devaMatch = rawText.match(/देवनागरी:\s*([^)<>|]+)/);
+  if (devaMatch && devaMatch[1]) {
+    return { text: devaMatch[1].trim(), lang: 'hi-IN' };
+  }
+
+  const pronMatch = rawText.match(/उच्चारण:\s*([^)<>|]+)/);
+  if (pronMatch && pronMatch[1]) {
+    const p = pronMatch[1].trim();
+    return { text: p, lang: /[\u0900-\u097F]/.test(p) ? 'hi-IN' : 'en-IN' };
+  }
+
+  // 3. Strip HTML tags, Ol Chiki / Ho unicodes, and parentheses
+  let clean = rawText.replace(/<[^>]*>/g, ' ')
+                     .replace(/[\u1C50-\u1C7F\u{16860}-\u{1689F}]/gu, '') // Remove Ol Chiki & Warang Citi
+                     .replace(/\([^)]*\)/g, ' ') // Remove parenthesized metadata
+                     .replace(/[^\w\s\u0900-\u097F]/g, ' ')
+                     .replace(/\s+/g, ' ')
+                     .trim();
+
+  if (!clean) {
+    clean = rawText.replace(/<[^>]*>/g, '').trim();
+  }
+
+  const isHindi = /[\u0900-\u097F]/.test(clean);
+  return { text: clean, lang: isHindi ? 'hi-IN' : 'en-IN' };
+}
+
+async function speak(text, overrideLang) {
+  if (!text || !text.trim()) {
+    toast('No text to speak.');
+    return;
+  }
+
+  // Try backend TTS API first
   try {
-    const langCode = (targetLanguage ? targetLanguage.value : 'sat').toLowerCase().slice(0, 3);
+    const langCode = (targetLanguage.value || 'sat').toLowerCase().slice(0, 3);
     const scriptCode = langCode === 'sat' ? 'olck' : 'deva';
+    const cleanWord = text.split('(')[0].replace(/<[^>]*>/g, '').trim();
+
     const res = await fetch('/api/v1/speech/tts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        text: speakable,
+        text: cleanWord,
         language_code: langCode,
         script_code: scriptCode,
         speed: 1.0
@@ -319,33 +371,71 @@ async function speak(text, lang = 'hi-IN') {
       const data = await res.json();
       if (data.audio_url) {
         const audio = new Audio(data.audio_url);
-        await audio.play();
+        audio.play();
         return;
       }
     }
-  } catch (err) {
-    // Network or audio playback issue, continue to browser synthesis fallback
+  } catch (e) {
+    // Fallback to browser synthesis
   }
 
-  // 2. Fallback to Web Speech API
   if (!('speechSynthesis' in window)) {
-    toast('Audio playback is not supported by this browser.');
+    toast('Speech synthesis is not supported on this browser.');
     return;
   }
 
+  // Unfreeze speech synthesis pipeline in browser
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(speakable);
-  utterance.lang = lang;
-  utterance.rate = 0.85;
-  utterance.pitch = 1.0;
-
-  const voices = window.speechSynthesis.getVoices();
-  const indianVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('IN'));
-  if (indianVoice) {
-    utterance.voice = indianVoice;
+  if (window.speechSynthesis.paused) {
+    window.speechSynthesis.resume();
   }
 
-  window.speechSynthesis.speak(utterance);
+  const { text: speakable, lang: autoLang } = getPronounceableText(text);
+  const targetLang = overrideLang || autoLang || 'hi-IN';
+
+  if (!speakable || !speakable.trim()) {
+    toast('Could not find pronounceable audio text.');
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(speakable);
+  utterance.lang = targetLang;
+  utterance.rate = 0.85;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+
+  // Select the best natural Indian or language voice
+  if (cachedVoices.length === 0) loadVoices();
+  if (cachedVoices.length > 0) {
+    let chosenVoice = null;
+    if (targetLang.startsWith('hi')) {
+      chosenVoice = cachedVoices.find(v => v.lang.startsWith('hi') || v.name.includes('Hindi') || v.name.includes('Lekha') || v.name.includes('Rishi'));
+    } else if (targetLang.includes('IN') || targetLang.includes('en')) {
+      chosenVoice = cachedVoices.find(v => v.lang === 'en-IN' || v.name.includes('India') || v.name.includes('Veena') || v.lang.startsWith('en'));
+    }
+    if (chosenVoice) {
+      utterance.voice = chosenVoice;
+    }
+  }
+
+  utterance.onstart = () => {
+    toast(`🔊 Speaking: "${speakable}"`);
+  };
+
+  utterance.onerror = (e) => {
+    console.warn('SpeechSynthesis error:', e);
+    if (e.error !== 'canceled' && e.error !== 'interrupted') {
+      window.speechSynthesis.resume();
+    }
+  };
+
+  // Safe execution with microtask delay to prevent immediate cancel in Chrome/Safari
+  setTimeout(() => {
+    window.speechSynthesis.speak(utterance);
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+  }, 20);
 }
 
 // Event Listeners
@@ -392,7 +482,12 @@ $('speakInput').addEventListener('click', () => {
   speak(hindiText.value, isEng ? 'en-US' : 'hi-IN');
 });
 
-$('speakResult').addEventListener('click', () => speak(translatedText.textContent));
+$('speakResult').addEventListener('click', () => {
+  const dev = translatedText.dataset.speakDeva;
+  const phon = translatedText.dataset.speakPhonetic;
+  const txt = translatedText.dataset.speakText || translatedText.textContent;
+  speak(dev || phon || txt);
+});
 
 $('saveWord').addEventListener('click', () => toast('⭐ Saved! Your word collection is growing.'));
 
