@@ -34,6 +34,7 @@ app.add_middleware(
 class TranslationRequest(BaseModel):
     text: str
     target_language: str = "santhali"
+    source_language: Optional[str] = "hin_Deva"
     translate_all: bool = False
 
 @app.get("/api/languages")
@@ -49,7 +50,7 @@ def get_languages():
 @app.post("/api/translate")
 def translate(req: TranslationRequest):
     """
-    Translates input Hindi text to a target language or all 9 languages.
+    Translates input Hindi/English text to a target language or all 9 languages.
     """
     if not req.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")
@@ -57,7 +58,7 @@ def translate(req: TranslationRequest):
     if req.translate_all:
         return translator_service.translate_all_languages(req.text)
     else:
-        return translator_service.translate_single(req.text, req.target_language)
+        return translator_service.translate_single(req.text, req.target_language, req.source_language)
 
 @app.get("/api/categories")
 def get_categories():

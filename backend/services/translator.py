@@ -63,56 +63,91 @@ class BhashaSetuTranslator:
                             if item not in self.word_index[w]:
                                 self.word_index[w].append(item)
 
-    def translate_single(self, text: str, target_lang: str) -> Dict[str, Any]:
+    CODE_MAP = {
+        "sat_olck": "santhali", "sat": "santhali", "santhali": "santhali",
+        "unr_deva": "mundari", "unr": "mundari", "mundari": "mundari",
+        "hoc_wara": "ho", "hoc_deva": "ho", "hoc": "ho", "ho": "ho",
+        "kru_deva": "kurukh", "kru": "kurukh", "kurukh": "kurukh",
+        "khr_deva": "kharia", "khr": "kharia", "kharia": "kharia",
+        "kht_deva": "khortha", "kht": "khortha", "khortha": "khortha",
+        "sck_deva": "nagpuri", "sck": "nagpuri", "nagpuri": "nagpuri",
+        "tdb_deva": "panchpargania", "tdb": "panchpargania", "panchpargania": "panchpargania",
+        "kyw_deva": "kurmali", "kyw": "kurmali", "kurmali": "kurmali",
+        "hin_deva": "hindi", "hin": "hindi", "hindi": "hindi",
+        "eng_latn": "english", "eng": "english", "english": "english",
+    }
+
+    def translate_single(self, text: str, target_lang: str, source_lang: Optional[str] = "hin_Deva") -> Dict[str, Any]:
         """
         Translates a Hindi or English text query to a specific target language.
         Returns translations with native script, devanagari, phonetics, and word breakdown.
         """
-        target_lang = target_lang.lower().strip()
-        if target_lang not in self.languages:
-            target_lang = "santhali"
+        target_lang_clean = target_lang.lower().strip()
+        target_lang_id = self.CODE_MAP.get(target_lang_clean, target_lang_clean)
+        if target_lang_id not in self.languages:
+            target_lang_id = "santhali"
 
         clean_query = self._clean_text(text)
-        lang_meta = self.languages[target_lang]
+        lang_meta = self.languages[target_lang_id]
+        
+        is_pivot = False
+        if source_lang:
+            src_clean = self.CODE_MAP.get(source_lang.lower().strip(), source_lang.lower().strip())
+            if src_clean == "english":
+                is_pivot = True
+
+        translation_method = "pivot_en_hi_tribal" if is_pivot else "direct_dictionary"
 
         # 1. Exact phrase lookup
         if clean_query in self.phrase_index:
             item = self.phrase_index[clean_query]
-            tr = item["translations"].get(target_lang, {})
+            tr = item["translations"].get(target_lang_id, {})
+            native_val = tr.get("native", tr.get("dev", ""))
             return {
                 "success": True,
                 "match_type": "exact",
                 "source_text": text,
                 "matched_entry": item.get("hindi", "") + " (" + item.get("english", "") + ")",
-                "target_lang": target_lang,
+                "target_lang": target_lang_id,
                 "target_lang_name": lang_meta["name_hi"],
                 "emoji": item.get("emoji", "✨"),
                 "category": item.get("category", "general"),
                 "devanagari": tr.get("dev", ""),
-                "native_script": tr.get("native", tr.get("dev", "")),
+                "native_script": native_val,
+                "translated_text": native_val or tr.get("dev", ""),
                 "phonetic": tr.get("phonetic", ""),
+                "transliteration": tr.get("phonetic", ""),
                 "script_name": lang_meta["primary_script"],
-                "words_breakdown": self._breakdown_phrase(item, target_lang)
+                "translation_method": translation_method,
+                "quality_flags": [],
+                "warnings": [],
+                "words_breakdown": self._breakdown_phrase(item, target_lang_id)
             }
 
         # 2. Substring / partial match lookup
         for phrase, item in self.phrase_index.items():
             if phrase in clean_query or (len(clean_query) >= 3 and clean_query in phrase):
-                tr = item["translations"].get(target_lang, {})
+                tr = item["translations"].get(target_lang_id, {})
+                native_val = tr.get("native", tr.get("dev", ""))
                 return {
                     "success": True,
                     "match_type": "partial",
                     "source_text": text,
                     "matched_entry": item.get("hindi", "") + " (" + item.get("english", "") + ")",
-                    "target_lang": target_lang,
+                    "target_lang": target_lang_id,
                     "target_lang_name": lang_meta["name_hi"],
                     "emoji": item.get("emoji", "✨"),
                     "category": item.get("category", "general"),
                     "devanagari": tr.get("dev", ""),
-                    "native_script": tr.get("native", tr.get("dev", "")),
+                    "native_script": native_val,
+                    "translated_text": native_val or tr.get("dev", ""),
                     "phonetic": tr.get("phonetic", ""),
+                    "transliteration": tr.get("phonetic", ""),
                     "script_name": lang_meta["primary_script"],
-                    "words_breakdown": self._breakdown_phrase(item, target_lang)
+                    "translation_method": translation_method,
+                    "quality_flags": [],
+                    "warnings": [],
+                    "words_breakdown": self._breakdown_phrase(item, target_lang_id)
                 }
 
         # 3. Token-by-token composition
@@ -128,7 +163,7 @@ class BhashaSetuTranslator:
             if clean_tok in self.word_index and len(self.word_index[clean_tok]) > 0:
                 found_any = True
                 matched_item = self.word_index[clean_tok][0]
-                tr = matched_item["translations"].get(target_lang, {})
+                tr = matched_item["translations"].get(target_lang_id, {})
                 d_val = tr.get("dev", token)
                 n_val = tr.get("native", d_val)
                 p_val = tr.get("phonetic", token)
@@ -144,7 +179,7 @@ class BhashaSetuTranslator:
                 })
             else:
                 translated_dev.append(token)
-                if target_lang == "santhali":
+                if target_lang_id == "santhali":
                     translated_native.append(devanagari_to_olchiki(token))
                 else:
                     translated_native.append(token)
@@ -166,14 +201,19 @@ class BhashaSetuTranslator:
             "match_type": "tokenized" if found_any else "transliterated",
             "source_text": text,
             "matched_entry": None,
-            "target_lang": target_lang,
+            "target_lang": target_lang_id,
             "target_lang_name": lang_meta["name_hi"],
             "emoji": "✨",
             "category": "general",
             "devanagari": dev_result,
             "native_script": native_result,
+            "translated_text": native_result or dev_result,
             "phonetic": phonetic_result,
+            "transliteration": phonetic_result,
             "script_name": lang_meta["primary_script"],
+            "translation_method": translation_method,
+            "quality_flags": [] if found_any else ["unresolved_placeholder"],
+            "warnings": [],
             "words_breakdown": breakdowns
         }
 

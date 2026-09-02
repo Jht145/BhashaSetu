@@ -73,20 +73,20 @@
         <!-- Language Switcher Bar -->
         <div class="translator-lang-bar">
           <div class="lang-select-box">
-            <span class="lang-label">I want to translate from (स्रोत भाषा)</span>
-            <select class="lang-select" id="sourceLanguage">
+            <label for="sourceLanguage" class="lang-label">I want to translate from (स्रोत भाषा)</label>
+            <select class="lang-select" id="sourceLanguage" aria-label="स्रोत भाषा चुनें (Select source language)">
               <option value="hindi" selected>🇮🇳 Hindi (हिन्दी)</option>
               <option value="english">🇬🇧 English (अंग्रेज़ी)</option>
             </select>
           </div>
 
-          <button class="swap-btn" id="swapBtn" title="स्रोत भाषा बदलें (Toggle Hindi / English)" aria-label="Swap language">
+          <button class="swap-btn" id="swapBtn" title="स्रोत भाषा बदलें (Toggle Hindi / English)" aria-label="स्रोत भाषा टॉगल करें (Swap source language)">
             ⇄
           </button>
 
           <div class="lang-select-box">
-            <span class="lang-label">I want to translate to (लक्ष्य भाषा)</span>
-            <select class="lang-select" id="targetLanguage">
+            <label for="targetLanguage" class="lang-label">I want to translate to (लक्ष्य भाषा)</label>
+            <select class="lang-select" id="targetLanguage" aria-label="लक्ष्य भाषा चुनें (Select target language)">
               <optgroup label="🌲 जनजातीय भाषाएँ (Tribal Languages)">
                 <option value="santhali" selected>संताली (Santhali - ᱥᱟᱱᱛᱟᱲᱤ)</option>
                 <option value="mundari">मुंडारी (Mundari - ᱢᱩᱱᱰᱟᱨᱤ)</option>
@@ -120,21 +120,21 @@
             <div>
               <div class="pane-header">
                 <span class="pane-title" id="sourcePaneTitle">🇮🇳 Write in Hindi / हिंदी पाठ</span>
-                <span class="char-counter" id="charCounter">0 अक्षर</span>
+                <span class="char-counter" id="charCounter" aria-live="polite">0 अक्षर</span>
               </div>
-              <textarea id="hindiInput" class="source-textarea" placeholder="यहाँ कोई भी हिंदी शब्द या वाक्य लिखें (जैसे: नमस्ते, पानी, धन्यवाद)...">नमस्ते</textarea>
+              <textarea id="hindiInput" class="source-textarea" placeholder="यहाँ कोई भी हिंदी शब्द या वाक्य लिखें (जैसे: नमस्ते, पानी, धन्यवाद)..." aria-label="अनुवाद के लिए पाठ दर्ज करें (Enter text to translate)">नमस्ते</textarea>
             </div>
 
             <div class="pane-footer">
               <div class="action-btn-group">
-                <button class="btn-pill-action" id="btnSpeakInput" title="स्रोत पाठ सुनें">
+                <button class="btn-pill-action" id="btnSpeakInput" title="स्रोत पाठ सुनें" aria-label="स्रोत पाठ का उच्चारण सुनें">
                   <span>🔊</span> सुनें
                 </button>
-                <button class="btn-pill-action" id="btnClearInput" title="साफ करें">
+                <button class="btn-pill-action" id="btnClearInput" title="साफ करें" aria-label="इनपुट पाठ साफ करें">
                   <span>✕</span> साफ
                 </button>
               </div>
-              <button class="btn-pill-action btn-pill-primary" id="btnTranslate">
+              <button class="btn-pill-action btn-pill-primary" id="btnTranslate" aria-label="अनुवाद करें (Translate)">
                 <span>✨</span> अनुवाद करें
               </button>
             </div>
@@ -148,7 +148,7 @@
                 <span class="sample-greeting-badge" id="outputScriptBadge">Ol Chiki</span>
               </div>
               
-              <div class="output-display">
+              <div class="output-display" id="outputDisplay" role="region" aria-live="polite" aria-label="अनुवाद परिणाम (Translation Result)">
                 <div class="output-native-text" id="outputNativeText">ᱡᱚᱦᱟᱨ</div>
                 <div class="output-sub-text" id="outputSubText">
                   <span id="outputDevText">देवनागरी: जोहार</span>
@@ -159,14 +159,14 @@
 
             <div class="pane-footer">
               <div class="action-btn-group">
-                <button class="btn-pill-action" id="btnSpeakOutput" title="अनुवादित उच्चारण सुनें">
+                <button class="btn-pill-action" id="btnSpeakOutput" title="अनुवादित उच्चारण सुनें" aria-label="अनुवादित उच्चारण सुनें">
                   <span>🔊</span> उच्चारण सुनें
                 </button>
-                <button class="btn-pill-action" id="btnCopyOutput" title="क्लिपबोर्ड पर कॉपी करें">
+                <button class="btn-pill-action" id="btnCopyOutput" title="क्लिपबोर्ड पर कॉपी करें" aria-label="अनुवादित पाठ कॉपी करें">
                   <span>📋</span> कॉपी
                 </button>
               </div>
-              <button class="btn-pill-action" id="btnSaveWord" title="शब्द संग्रह में जोड़ें">
+              <button class="btn-pill-action" id="btnSaveWord" title="शब्द संग्रह में जोड़ें" aria-label="शब्द को पसंदीदा सूची में सहेजें">
                 <span>⭐</span> सहेजें
               </button>
             </div>
@@ -286,6 +286,7 @@
   <div class="toast-container" id="toastBox" role="status" aria-live="polite"></div>
 
   <!-- Scripts -->
+  <script src="js/languages.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
