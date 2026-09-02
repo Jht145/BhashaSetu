@@ -278,15 +278,8 @@ async function translate() {
 }
 
 // High-Quality Natural Speech Synthesis (Zero Hissing, Smooth Human Voice)
-function speak(text, lang = 'hi-IN') {
+async function speak(text, lang = 'hi-IN') {
   if (!text || !text.trim()) return;
-
-  if (!('speechSynthesis' in window)) {
-    toast('Audio playback is not supported by this browser.');
-    return;
-  }
-
-  window.speechSynthesis.cancel();
 
   // Extract pronounceable text: if contains Devanagari or phonetic, prioritize that for natural voice
   let speakable = text;
@@ -300,7 +293,6 @@ function speak(text, lang = 'hi-IN') {
     speakable = pronMatch[1].trim();
     lang = 'hi-IN';
   } else {
-    // Strip HTML tags and metadata
     speakable = text.replace(/<[^>]*>/g, '').split('(')[0].trim();
     if (/[a-zA-Z]/.test(speakable) && !/[\u0900-\u097F]/.test(speakable)) {
       lang = 'en-IN';
@@ -309,12 +301,44 @@ function speak(text, lang = 'hi-IN') {
     }
   }
 
+  // 1. Try playing high-fidelity neural MP3 audio from backend TTS service
+  try {
+    const langCode = (targetLanguage ? targetLanguage.value : 'sat').toLowerCase().slice(0, 3);
+    const scriptCode = langCode === 'sat' ? 'olck' : 'deva';
+    const res = await fetch('/api/v1/speech/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: speakable,
+        language_code: langCode,
+        script_code: scriptCode,
+        speed: 1.0
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.audio_url) {
+        const audio = new Audio(data.audio_url);
+        await audio.play();
+        return;
+      }
+    }
+  } catch (err) {
+    // Network or audio playback issue, continue to browser synthesis fallback
+  }
+
+  // 2. Fallback to Web Speech API
+  if (!('speechSynthesis' in window)) {
+    toast('Audio playback is not supported by this browser.');
+    return;
+  }
+
+  window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(speakable);
   utterance.lang = lang;
   utterance.rate = 0.85;
   utterance.pitch = 1.0;
 
-  // Prefer Indian accent voices if available
   const voices = window.speechSynthesis.getVoices();
   const indianVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('IN'));
   if (indianVoice) {
