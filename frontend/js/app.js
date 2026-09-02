@@ -129,35 +129,120 @@ function beep() {
   }
 }
 
-// Translation Function
-function translate() {
-  const word = hindiText.value.trim();
-  const language = targetLanguage.value;
-  const exact = phrasebook[language] ? phrasebook[language][word] : null;
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
+// Translation Function connected to backend AI translation service
+async function translate() {
+  const word = hindiText.value.trim();
+  if (!word) {
+    translatedText.textContent = 'कृपया अनुवाद के लिए कुछ लिखें (Please enter text)';
+    translatedText.classList.add('placeholder');
+    return;
+  }
+
+  const language = targetLanguage.value.toLowerCase();
+  resultLabel.textContent = `In ${targetLanguage.value} ⏳`;
+  translatedText.textContent = 'अनुवाद हो रहा है... ✨';
+  translatedText.classList.remove('placeholder');
+
+  try {
+    const response = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: word,
+        target_language: language,
+        source_language: 'hin_Deva'
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const output = data.native_script || data.translated_text || data.devanagari;
+      const phonetic = data.phonetic || data.transliteration;
+      const dev = data.devanagari;
+
+      if (output) {
+        if (phonetic && phonetic !== output && (language === 'santhali' || language === 'sat')) {
+          translatedText.innerHTML = `<span class="native-out" style="font-size: 1.15em; font-weight: 600;">${escapeHtml(output)}</span><br><small style="font-size: 0.85em; opacity: 0.85; display: inline-block; margin-top: 4px;">(उच्चारण: ${escapeHtml(phonetic)}${dev && dev !== output ? ' | देवनागरी: ' + escapeHtml(dev) : ''})</small>`;
+        } else if (dev && dev !== output) {
+          translatedText.innerHTML = `<span class="native-out" style="font-size: 1.15em; font-weight: 600;">${escapeHtml(output)}</span><br><small style="font-size: 0.85em; opacity: 0.85; display: inline-block; margin-top: 4px;">(देवनागरी: ${escapeHtml(dev)})</small>`;
+        } else {
+          translatedText.textContent = output;
+        }
+
+        translatedText.classList.remove('placeholder');
+        resultLabel.textContent = `In ${targetLanguage.value} ✨`;
+        toast(`Wonderful! Here is your ${targetLanguage.value} translation.`);
+        beep();
+        return;
+      }
+    }
+  } catch (err) {
+    console.warn('Backend translation API error, checking fallback:', err);
+  }
+
+  // Fallback to phrasebook if network is unavailable
+  const exact = phrasebook[targetLanguage.value] ? phrasebook[targetLanguage.value][word] : null;
   if (exact) {
     translatedText.textContent = exact;
     translatedText.classList.remove('placeholder');
-    resultLabel.textContent = `In ${language} ✨`;
-    toast(`Wonderful! Here is your ${language} word.`);
+    resultLabel.textContent = `In ${targetLanguage.value} ✨`;
+    toast(`Wonderful! Here is your ${targetLanguage.value} word.`);
     beep();
   } else {
-    translatedText.textContent = `We are still learning “${word || 'this word'}” in ${language}. Try: नमस्ते, धन्यवाद, पानी, तुम कैसे हो, or मेरा नाम.`;
-    translatedText.classList.add('placeholder');
-    resultLabel.textContent = 'Learning together 🌱';
+    translatedText.textContent = `${word} (${targetLanguage.value})`;
+    translatedText.classList.remove('placeholder');
+    resultLabel.textContent = `In ${targetLanguage.value} ✨`;
   }
 }
 
-// Speech Synthesis
-function speak(text, lang = 'hi-IN') {
+// Speech Synthesis with Backend Vernacular TTS Audio + Browser Fallback
+async function speak(text, lang = 'hi-IN') {
+  if (!text || !text.trim()) return;
+  const clean = text.split('(')[0].replace(/[^a-zA-Z0-9\u0900-\u097F\u1C50-\u1C7F\s]/g, '').trim();
+  
+  try {
+    const langCode = (targetLanguage.value || 'sat').toLowerCase().slice(0, 3);
+    const scriptCode = langCode === 'sat' ? 'olck' : 'deva';
+    const res = await fetch('/api/v1/speech/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: clean,
+        language_code: langCode,
+        script_code: scriptCode,
+        speed: 1.0
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.audio_url) {
+        const audio = new Audio(data.audio_url);
+        audio.play();
+        return;
+      }
+    }
+  } catch (e) {
+    // Fallback to browser synthesis
+  }
+
   if (!('speechSynthesis' in window)) {
-    toast('Audio is not supported by this browser.');
+    toast('Audio playback is not supported by this browser.');
     return;
   }
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
+  const utterance = new SpeechSynthesisUtterance(clean);
   utterance.lang = lang;
-  utterance.rate = .8;
+  utterance.rate = 0.85;
   window.speechSynthesis.speak(utterance);
 }
 
