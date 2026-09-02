@@ -1,176 +1,289 @@
 <!doctype html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="BhashaSetu — a playful Hindi to tribal and regional language learning prototype." />
-  <title>BhashaSetu | Every language has a voice</title>
+  <meta name="description" content="BhashaSetu — Hindi / English to Tribal & Regional Languages Learning Portal" />
+  <title>भाषा सेतु (BhashaSetu) | Hindi & English to Tribal & Regional Languages</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
-  <main class="sky">
-    <div class="cloud one"></div>
-    <div class="cloud two"></div>
-    <div class="cloud three"></div>
-    
-    <header class="topbar">
-      <a class="brand" href="#home" aria-label="BhashaSetu home">
-        <span class="bridge-icon" aria-hidden="true"></span>BhashaSetu
+
+  <!-- ====================================================================
+       TOP NAVIGATION BAR
+       ==================================================================== -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a class="brand-logo" href="#home" aria-label="BhashaSetu Home">
+        <div class="brand-badge-icon">🌉</div>
+        <div>
+          <span>भाषा</span><span class="brand-text-en">सेतु</span>
+        </div>
       </a>
-      <nav id="navigation">
-        <a class="active" href="#home">Home</a>
-        <a href="#translate">Translate</a>
-        <a href="#languages">Languages</a>
-        <a href="#games">Play & Learn</a>
+
+      <nav class="nav-links" id="navLinks">
+        <a class="nav-link active" href="#translator">अनुवादक (Translator)</a>
+        <a class="nav-link" href="#languages">भाषाएँ (Languages)</a>
+        <a class="nav-link" href="#activities">अभ्यास (Practice)</a>
+        <a class="nav-link" href="#about">परिचय (About)</a>
       </nav>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="sound-toggle" id="soundToggle" title="Toggle sound effects" aria-label="Toggle sound effects">🔊</button>
-        <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
-      </div>
-    </header>
 
-    <section class="hero" id="home">
-      <div class="hero-copy">
-        <div class="eyebrow">🌈 Every language has a voice!</div>
-        <h1>Hindi se<br><span>apni bhasha</span> tak.</h1>
-        <p>Welcome to a happy little bridge where children can listen, learn, play, and connect through the beautiful languages of Jharkhand and beyond.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#translate">✨ Start translating</a>
-          <a class="btn btn-secondary" href="#games">🎮 Play a game</a>
-        </div>
+      <div class="nav-actions">
+        <button class="btn-icon-toggle" id="soundToggle" title="ध्वनि चालू/बंद करें" aria-label="Toggle sound">
+          <span id="soundIcon">🔊</span> ध्वनि चालू
+        </button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation">☰</button>
       </div>
-      <div class="hero-art" aria-label="A playful illustrated child in a forest">
-        <div class="sun"></div>
-        <div class="speech">Namaste! Let’s learn a new word today! 💬</div>
-        <div class="tree">
-          <div class="trunk"></div>
-          <div class="branch a"></div>
-          <div class="branch b"></div>
-          <div class="branch c"></div>
-          <div class="crown a"></div>
-          <div class="crown b"></div>
-          <div class="crown c"></div>
-        </div>
-        <div class="ground"></div>
-        <div class="kid">
-          <div class="ear l"></div>
-          <div class="ear r"></div>
-          <div class="head">
-            <div class="hair"></div>
-            <div class="eye l"></div>
-            <div class="eye r"></div>
-            <div class="smile"></div>
-          </div>
-          <div class="body">
-            <div class="shirt"></div>
-            <div class="arm l"></div>
-            <div class="arm r"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
+    </div>
+  </header>
 
-  <!-- Section 1: Translator -->
-  <section class="section section-cream" id="translate">
-    <div class="section-inner">
-      <h2 class="section-title">Make a language bridge 🌉</h2>
-      <p class="section-subtitle">Type a Hindi word or sentence, choose a language, and listen to the result. This demo includes a small starter phrasebook.</p>
-      
-      <div class="translator">
-        <div class="language-row">
-          <div class="lang-field">
-            <label for="sourceLanguage">I want to translate from</label>
-            <select id="sourceLanguage"><option>Hindi (हिन्दी)</option></select>
+  <!-- ====================================================================
+       HERO SECTION
+       ==================================================================== -->
+  <section class="hero-section" id="home">
+    <div class="container hero-content">
+      <div class="hero-tag">
+        <span>🌱</span> जनजातीय एवं क्षेत्रीय भाषा शिक्षण मंच
+      </div>
+      <h1 class="hero-title">
+        हिंदी व अंग्रेज़ी से <span>अपनी भाषा</span> का सरल सेतु
+      </h1>
+      <p class="hero-description">
+        झारखंड और समीपवर्ती क्षेत्रों की समृद्ध जनजातीय एवं क्षेत्रीय भाषाओं को सीखें, समझें और दैनिक जीवन में उपयोग करें।
+      </p>
+
+      <div class="hero-feature-pills">
+        <div class="feature-pill"><span>🗣️</span> ९ प्रमुख भाषाएँ</div>
+        <div class="feature-pill"><span>🌐</span> हिंदी एवं English स्रोत समर्थन</div>
+        <div class="feature-pill"><span>🔤</span> मूल लिपियाँ (Ol Chiki / Warang Citi)</div>
+        <div class="feature-pill"><span>🔊</span> ऑडियो उच्चारण</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       TRANSLATOR WORKSPACE SECTION
+       ==================================================================== -->
+  <section class="section-padding" id="translator">
+    <div class="container">
+      <div class="translator-card">
+        
+        <!-- Language Switcher Bar -->
+        <div class="translator-lang-bar">
+          <div class="lang-select-box">
+            <span class="lang-label">I want to translate from (स्रोत भाषा)</span>
+            <select class="lang-select" id="sourceLanguage">
+              <option value="hindi" selected>🇮🇳 Hindi (हिन्दी)</option>
+              <option value="english">🇬🇧 English (अंग्रेज़ी)</option>
+            </select>
           </div>
-          <button class="arrow" id="swapBtn" title="Hindi is the source language in this prototype" aria-label="Swap languages">➜</button>
-          <div class="lang-field">
-            <label for="targetLanguage">I want to translate to</label>
-            <select id="targetLanguage">
-              <option value="Santhali">Santhali</option>
-              <option value="Mundari">Mundari</option>
-              <option value="Ho">Ho</option>
-              <option value="Kurukh">Kurukh</option>
-              <option value="Kharia">Kharia</option>
-              <option value="Khortha">Khortha</option>
-              <option value="Nagpuri">Nagpuri</option>
-              <option value="Panchpargania">Panchpargania</option>
-              <option value="Kurmali">Kurmali</option>
+
+          <button class="swap-btn" id="swapBtn" title="स्रोत भाषा बदलें (Toggle Hindi / English)" aria-label="Swap language">
+            ⇄
+          </button>
+
+          <div class="lang-select-box">
+            <span class="lang-label">I want to translate to (लक्ष्य भाषा)</span>
+            <select class="lang-select" id="targetLanguage">
+              <optgroup label="🌲 जनजातीय भाषाएँ (Tribal Languages)">
+                <option value="santhali" selected>संताली (Santhali - ᱥᱟᱱᱛᱟᱲᱤ)</option>
+                <option value="mundari">मुंडारी (Mundari - ᱢᱩᱱᱰᱟᱨᱤ)</option>
+                <option value="ho">हो (Ho - 𑢹𑣉)</option>
+                <option value="kurukh">कुड़ुख़ (Kurukh / Oraon)</option>
+                <option value="kharia">खड़िया (Kharia)</option>
+              </optgroup>
+              <optgroup label="🌾 क्षेत्रीय भाषाएँ (Regional Languages)">
+                <option value="khortha">खोरठा (Khortha)</option>
+                <option value="nagpuri">नागपुरी / सादरी (Nagpuri)</option>
+                <option value="panchpargania">पंचपरगनिया (Panchpargania)</option>
+                <option value="kurmali">कुरमाली (Kurmali)</option>
+              </optgroup>
             </select>
           </div>
         </div>
-        
-        <div class="translate-boxes">
-          <div class="text-card">
-            <label for="hindiText">Write in Hindi ✍️</label>
-            <textarea id="hindiText" placeholder="जैसे: नमस्ते">नमस्ते</textarea>
-            <div class="card-actions">
-              <button class="round-icon" id="speakInput" aria-label="Listen to Hindi text">🔊 Listen</button>
-              <span class="small-note">Try: नमस्ते, धन्यवाद, पानी</span>
-            </div>
-          </div>
-          <div class="text-card">
-            <label id="resultLabel">Your new word ✨</label>
-            <div class="result" id="translatedText" aria-live="polite">Johar</div>
-            <div class="card-actions">
-              <button class="round-icon" id="speakResult" aria-label="Listen to translated text">🔊 Listen</button>
-              <button class="round-icon" id="saveWord" aria-label="Save word">⭐ Save</button>
-            </div>
+
+        <!-- Quick Suggestions Chips -->
+        <div class="quick-prompts-container">
+          <span class="quick-prompts-label" id="quickPromptsLabel">सुझाव (Suggestions):</span>
+          <div id="promptChipsContainer" style="display: inline-flex; flex-wrap: wrap; gap: 8px;">
+            <!-- Rendered dynamically by app.js -->
           </div>
         </div>
-        
-        <div class="translate-action">
-          <button class="btn btn-primary" id="translateBtn">🌟 Translate now</button>
+
+        <!-- Dual Input/Output Translation Grid -->
+        <div class="translator-grid">
+          
+          <!-- Source Input Pane -->
+          <div class="translate-pane input-pane">
+            <div>
+              <div class="pane-header">
+                <span class="pane-title" id="sourcePaneTitle">🇮🇳 Write in Hindi / हिंदी पाठ</span>
+                <span class="char-counter" id="charCounter">0 अक्षर</span>
+              </div>
+              <textarea id="hindiInput" class="source-textarea" placeholder="यहाँ कोई भी हिंदी शब्द या वाक्य लिखें (जैसे: नमस्ते, पानी, धन्यवाद)...">नमस्ते</textarea>
+            </div>
+
+            <div class="pane-footer">
+              <div class="action-btn-group">
+                <button class="btn-pill-action" id="btnSpeakInput" title="स्रोत पाठ सुनें">
+                  <span>🔊</span> सुनें
+                </button>
+                <button class="btn-pill-action" id="btnClearInput" title="साफ करें">
+                  <span>✕</span> साफ
+                </button>
+              </div>
+              <button class="btn-pill-action btn-pill-primary" id="btnTranslate">
+                <span>✨</span> अनुवाद करें
+              </button>
+            </div>
+          </div>
+
+          <!-- Target Language Output Pane -->
+          <div class="translate-pane output-pane">
+            <div>
+              <div class="pane-header">
+                <span class="pane-title" id="outputTargetLabel">🦚 संताली अनुवाद (Santhali)</span>
+                <span class="sample-greeting-badge" id="outputScriptBadge">Ol Chiki</span>
+              </div>
+              
+              <div class="output-display">
+                <div class="output-native-text" id="outputNativeText">ᱡᱚᱦᱟᱨ</div>
+                <div class="output-sub-text" id="outputSubText">
+                  <span id="outputDevText">देवनागरी: जोहार</span>
+                  <span id="outputPhoneticText" style="margin-left: 8px;">(उच्चारण: Johar)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pane-footer">
+              <div class="action-btn-group">
+                <button class="btn-pill-action" id="btnSpeakOutput" title="अनुवादित उच्चारण सुनें">
+                  <span>🔊</span> उच्चारण सुनें
+                </button>
+                <button class="btn-pill-action" id="btnCopyOutput" title="क्लिपबोर्ड पर कॉपी करें">
+                  <span>📋</span> कॉपी
+                </button>
+              </div>
+              <button class="btn-pill-action" id="btnSaveWord" title="शब्द संग्रह में जोड़ें">
+                <span>⭐</span> सहेजें
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       LANGUAGES DIRECTORY SECTION
+       ==================================================================== -->
+  <section class="section-padding" id="languages" style="background: #FFFFFF; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
+    <div class="container">
+      <div class="section-header-block">
+        <h2 class="section-title">भाषा परिचय एवं विवरण</h2>
+        <p class="section-subtitle">प्रत्येक भाषा का अपना इतिहास, लिपि और अनूठी सांस्कृतिक पहचान है।</p>
+      </div>
+
+      <div class="lang-grid-wrapper" id="languagesContainer">
+        <!-- Injected dynamically by app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       PRACTICE & ACTIVITIES SECTION
+       ==================================================================== -->
+  <section class="section-padding" id="activities">
+    <div class="container">
+      <div class="section-header-block">
+        <h2 class="section-title">सरल अभ्यास एवं अधिगम</h2>
+        <p class="section-subtitle">खेल-खेल में नए शब्दों का उच्चारण और अर्थ सीखें।</p>
+      </div>
+
+      <div class="activities-grid">
+        <div class="activity-card">
+          <div class="activity-icon-box">🧩</div>
+          <div>
+            <h3 class="activity-title">शब्दावली मिलान (Word Match)</h3>
+            <p class="activity-desc">हिंदी या अंग्रेज़ी शब्दों को उनके सही जनजातीय अनुवाद के साथ जोड़ें और अंक अर्जित करें।</p>
+          </div>
+          <button class="btn-pill-action btn-pill-primary" style="margin-top: auto;" onclick="handleActivityClick('Word Match')">
+            अभ्यास शुरू करें →
+          </button>
+        </div>
+
+        <div class="activity-card">
+          <div class="activity-icon-box" style="background: var(--secondary-light); color: var(--secondary);">🎧</div>
+          <div>
+            <h3 class="activity-title">ऑडियो पहचान (Listen & Pick)</h3>
+            <p class="activity-desc">ध्यान से सही उच्चारण सुनें और दिए गए विकल्पों में से सही शब्द पहचानें।</p>
+          </div>
+          <button class="btn-pill-action btn-pill-primary" style="margin-top: auto; background: var(--secondary); border-color: var(--secondary);" onclick="handleActivityClick('Listen & Pick')">
+            अभ्यास शुरू करें →
+          </button>
+        </div>
+
+        <div class="activity-card">
+          <div class="activity-icon-box" style="background: var(--accent-amber-light); color: var(--accent-amber);">📚</div>
+          <div>
+            <h3 class="activity-title">सचित्र शब्दकोश (Picture Dictionary)</h3>
+            <p class="activity-desc">दैनिक जीवन के ६०+ सामान्य शब्दों को हिंदी, English, और जनजातीय भाषाओं में चित्रों और ध्वनि के साथ याद करें।</p>
+          </div>
+          <button class="btn-pill-action btn-pill-primary" style="margin-top: auto; background: var(--accent-amber); border-color: var(--accent-amber);" onclick="handleActivityClick('Picture Dictionary')">
+            शब्दकोश खोलें →
+          </button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Section 2: Language Adventure -->
-  <section class="section" id="languages">
-    <div class="section-inner">
-      <h2 class="section-title">Choose your language adventure</h2>
-      <p class="section-subtitle">Nine languages, many stories, and countless new words to discover.</p>
-      <div class="language-grid" id="languageGrid"></div>
-    </div>
-  </section>
+  <!-- ====================================================================
+       FOOTER
+       ==================================================================== -->
+  <footer class="site-footer" id="about">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>🌉 भाषा सेतु (BhashaSetu)</h3>
+          <p>
+            एक खुला शैक्षणिक मंच जो हिंदी व अंग्रेज़ी भाषी शिक्षार्थियों को भारत की समृद्ध जनजातीय एवं क्षेत्रीय भाषाओं से जोड़ता है।
+          </p>
+        </div>
 
-  <!-- Section 3: Games -->
-  <section class="section games" id="games">
-    <div class="section-inner">
-      <h2 class="section-title">Play, listen, and learn!</h2>
-      <p class="section-subtitle">Little games make big learning moments. Pick an activity and let the fun begin.</p>
-      <div class="game-grid">
-        <article class="game-card">
-          <div class="game-icon">🧩</div>
-          <h3>Word Match</h3>
-          <p>Match a Hindi word with its picture and translation.</p>
-          <button class="btn btn-primary game-btn" data-game="Word Match">Play now</button>
-        </article>
-        <article class="game-card">
-          <div class="game-icon">🎧</div>
-          <h3>Listen & Pick</h3>
-          <p>Listen carefully, then choose the word you heard.</p>
-          <button class="btn btn-primary game-btn" data-game="Listen & Pick">Play now</button>
-        </article>
-        <article class="game-card">
-          <div class="game-icon">🌟</div>
-          <h3>Word Quest</h3>
-          <p>Collect stars by learning a new word every day.</p>
-          <button class="btn btn-primary game-btn" data-game="Word Quest">Play now</button>
-        </article>
+        <div class="footer-col">
+          <h4>जनजातीय भाषाएँ</h4>
+          <ul>
+            <li>संताली (Santali)</li>
+            <li>मुंडारी (Mundari)</li>
+            <li>हो (Ho)</li>
+            <li>कुड़ुख़ (Kurukh)</li>
+            <li>खड़िया (Kharia)</li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>क्षेत्रीय भाषाएँ</h4>
+          <ul>
+            <li>खोरठा (Khortha)</li>
+            <li>नागपुरी (Nagpuri)</li>
+            <li>पंचपरगनिया (Panchpargania)</li>
+            <li>कुरमाली (Kurmali)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 भाषा सेतु परियोजना • समृद्ध भाषाई विरासत के संरक्षण एवं प्रसार हेतु समर्पित</p>
       </div>
     </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-brand">🌉 BhashaSetu</div>
-    <p>Hindi se apni bhasha tak — seekho, bolo, judo!</p>
-    <p>Built with care for languages, children, and communities.</p>
   </footer>
-  
-  <div class="toast" id="toast" role="status"></div>
+
+  <!-- Toast Notification Box -->
+  <div class="toast-container" id="toastBox" role="status" aria-live="polite"></div>
 
   <!-- Scripts -->
   <script src="js/app.js"></script>

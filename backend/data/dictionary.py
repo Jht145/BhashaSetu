@@ -24,6 +24,7 @@ VOCABULARY = [
         "id": "greet_hello",
         "category": "greetings",
         "hindi": "नमस्ते / जोहार",
+        "english": "Hello / Hi / Greetings",
         "emoji": "🙏",
         "translations": {
             "santhali": {"dev": "जोहार", "native": "ᱡᱚᱦᱟᱨ", "phonetic": "Johar"},
@@ -41,6 +42,7 @@ VOCABULARY = [
         "id": "greet_how_are_you",
         "category": "greetings",
         "hindi": "आप कैसे हैं? / तुम कैसे हो?",
+        "english": "How are you? / How are you doing?",
         "emoji": "🤝",
         "translations": {
             "santhali": {"dev": "चेत लेका मेनामा?", "native": "ᱪᱮᱫ ᱞᱮᱠᱟ ᱢᱮᱱᱟᱢᱟ?", "phonetic": "Chet leka menama?"},
@@ -58,6 +60,7 @@ VOCABULARY = [
         "id": "greet_i_am_fine",
         "category": "greetings",
         "hindi": "मैं ठीक हूँ / मैं अच्छा हूँ",
+        "english": "I am fine / I am good",
         "emoji": "👍",
         "translations": {
             "santhali": {"dev": "इञ दो बोगी गे मेनाञा", "native": "ᱤᱧ ᱫᱚ ᱵᱳᱜᱤ ᱜᱮ ᱢᱮᱱᱟᱧᱟ", "phonetic": "Inj do bogi ge menanja"},
@@ -75,6 +78,7 @@ VOCABULARY = [
         "id": "greet_thank_you",
         "category": "greetings",
         "hindi": "धन्यवाद / शुक्रिया",
+        "english": "Thank you / Thanks",
         "emoji": "💐",
         "translations": {
             "santhali": {"dev": "सराहना / जोहार", "native": "ᱥᱟᱨᱦᱟᱣ", "phonetic": "Sarhaw / Johar"},
@@ -92,6 +96,7 @@ VOCABULARY = [
         "id": "greet_welcome",
         "category": "greetings",
         "hindi": "स्वागत है / आइए",
+        "english": "Welcome",
         "emoji": "🤗",
         "translations": {
             "santhali": {"dev": "दाराम / हिजूः मे", "native": "ᱫᱟᱨᱟᱢ", "phonetic": "Daram / Hijuh me"},
@@ -111,6 +116,7 @@ VOCABULARY = [
         "id": "fam_mother",
         "category": "family",
         "hindi": "माँ / माताजी",
+        "english": "Mother / Mom / Mommy",
         "emoji": "👩",
         "translations": {
             "santhali": {"dev": "आयो / एंगा", "native": "ᱟᱭᱳ", "phonetic": "Ayo / Enga"},
@@ -128,6 +134,7 @@ VOCABULARY = [
         "id": "fam_father",
         "category": "family",
         "hindi": "पिताजी / बाबा / पापा",
+        "english": "Father / Dad / Daddy",
         "emoji": "👨",
         "translations": {
             "santhali": {"dev": "बाबा / आपा", "native": "ᱵᱟᱵᱟ", "phonetic": "Baba / Apa"},
@@ -145,6 +152,7 @@ VOCABULARY = [
         "id": "fam_brother",
         "category": "family",
         "hindi": "भाई / भैया",
+        "english": "Brother",
         "emoji": "👦",
         "translations": {
             "santhali": {"dev": "बोयहा / दादा / बोको", "native": "ᱵᱚᱭᱦᱟ", "phonetic": "Boyha / Dada"},
@@ -162,6 +170,7 @@ VOCABULARY = [
         "id": "fam_sister",
         "category": "family",
         "hindi": "बहन / दीदी",
+        "english": "Sister",
         "emoji": "👧",
         "translations": {
             "santhali": {"dev": "मिसि / दाई", "native": "ᱢᱤᱥᱤ", "phonetic": "Misi / Daai"},
@@ -179,6 +188,7 @@ VOCABULARY = [
         "id": "fam_child",
         "category": "family",
         "hindi": "बच्चा / नन्हा बच्चा",
+        "english": "Child / Baby / Kid",
         "emoji": "👶",
         "translations": {
             "santhali": {"dev": "गिदरा / होन", "native": "ᱜᱤᱫᱽᱨᱟᱹ", "phonetic": "Gidra / Hon"},
@@ -196,6 +206,7 @@ VOCABULARY = [
         "id": "fam_friend",
         "category": "family",
         "hindi": "दोस्त / मित्र / सखा",
+        "english": "Friend",
         "emoji": "🧒🤝👧",
         "translations": {
             "santhali": {"dev": "गाते / संगी", "native": "ᱜᱟᱛᱮ", "phonetic": "Gate / Sangi"},
@@ -215,6 +226,7 @@ VOCABULARY = [
         "id": "anim_elephant",
         "category": "animals",
         "hindi": "हाथी",
+        "english": "Elephant",
         "emoji": "🐘",
         "translations": {
             "santhali": {"dev": "हाथी / हाथी (हाथीः)", "native": "ᱦᱟᱹᱛᱤ", "phonetic": "Hathi"},
@@ -232,6 +244,7 @@ VOCABULARY = [
         "id": "anim_peacock",
         "category": "animals",
         "hindi": "मोर (मयूर)",
+        "english": "Peacock",
         "emoji": "🦚",
         "translations": {
             "santhali": {"dev": "माराः", "native": "ᱢᱟᱨᱟᱜ", "phonetic": "Marag"},
@@ -249,6 +262,7 @@ VOCABULARY = [
         "id": "anim_cow",
         "category": "animals",
         "hindi": "गाय (गौमाता)",
+        "english": "Cow",
         "emoji": "🐄",
         "translations": {
             "santhali": {"dev": "गाई / काडा", "native": "ᱜᱟᱹᱭ", "phonetic": "Gaai"},
@@ -266,6 +280,7 @@ VOCABULARY = [
         "id": "anim_dog",
         "category": "animals",
         "hindi": "कुत्ता",
+        "english": "Dog",
         "emoji": "🐕",
         "translations": {
             "santhali": {"dev": "सेता", "native": "ᱥᱮᱛᱟ", "phonetic": "Seta"},
@@ -283,6 +298,7 @@ VOCABULARY = [
         "id": "anim_cat",
         "category": "animals",
         "hindi": "बिल्ली / बिलौटा",
+        "english": "Cat",
         "emoji": "🐱",
         "translations": {
             "santhali": {"dev": "पुसी", "native": "ᱯᱩᱥᱤ", "phonetic": "Pusi"},
@@ -300,6 +316,7 @@ VOCABULARY = [
         "id": "anim_tiger",
         "category": "animals",
         "hindi": "बाघ / शेर",
+        "english": "Tiger / Lion",
         "emoji": "🐯",
         "translations": {
             "santhali": {"dev": "तारुप / कुल", "native": "ᱛᱟᱹᱨᱩᱵ", "phonetic": "Tarup / Kul"},
@@ -317,6 +334,7 @@ VOCABULARY = [
         "id": "anim_bird",
         "category": "animals",
         "hindi": "चिड़िया / पक्षी",
+        "english": "Bird",
         "emoji": "🐦",
         "translations": {
             "santhali": {"dev": "चेँड़े", "native": "ᱪᱮᱬᱮ", "phonetic": "Chenre"},
@@ -334,6 +352,7 @@ VOCABULARY = [
         "id": "anim_fish",
         "category": "animals",
         "hindi": "मछली / मीन",
+        "english": "Fish",
         "emoji": "🐟",
         "translations": {
             "santhali": {"dev": "हाकु", "native": "ᱦᱟᱹᱠᱩ", "phonetic": "Haku"},
@@ -351,6 +370,7 @@ VOCABULARY = [
         "id": "anim_butterfly",
         "category": "animals",
         "hindi": "तितली",
+        "english": "Butterfly",
         "emoji": "🦋",
         "translations": {
             "santhali": {"dev": "पिपिड़ींञ", "native": "ᱯᱤᱯᱤᱲᱤᱧ", "phonetic": "Pipirinj"},
@@ -370,6 +390,7 @@ VOCABULARY = [
         "id": "nat_sun",
         "category": "nature",
         "hindi": "सूरज / सूर्यदेव",
+        "english": "Sun",
         "emoji": "☀️",
         "translations": {
             "santhali": {"dev": "सिंघी / बेड़ा", "native": "ᱥᱤᱧ ᱪᱟᱸᱫᱳ", "phonetic": "Singi / Sin Chando"},
@@ -387,6 +408,7 @@ VOCABULARY = [
         "id": "nat_moon",
         "category": "nature",
         "hindi": "चाँद / चंदा मामा",
+        "english": "Moon",
         "emoji": "🌙",
         "translations": {
             "santhali": {"dev": "ञिंदा चांदो", "native": "ᱧᱤᱫᱟᱹ ᱪᱟᱸᱫᱳ", "phonetic": "Nyinda Chando"},
@@ -404,6 +426,7 @@ VOCABULARY = [
         "id": "nat_tree",
         "category": "nature",
         "hindi": "पेड़ / वृक्ष",
+        "english": "Tree",
         "emoji": "🌳",
         "translations": {
             "santhali": {"dev": "दारे", "native": "ᱫᱟᱨᱮ", "phonetic": "Dare"},
@@ -421,6 +444,7 @@ VOCABULARY = [
         "id": "nat_water",
         "category": "nature",
         "hindi": "पानी / जल",
+        "english": "Water",
         "emoji": "💧",
         "translations": {
             "santhali": {"dev": "दाः", "native": "ᱫᱟᱜ", "phonetic": "Daag / Dah"},
@@ -438,6 +462,7 @@ VOCABULARY = [
         "id": "nat_flower",
         "category": "nature",
         "hindi": "फूल / पुष्प",
+        "english": "Flower",
         "emoji": "🌸",
         "translations": {
             "santhali": {"dev": "बाहा", "native": "ᱵᱟᱦᱟ", "phonetic": "Baha"},
@@ -455,6 +480,7 @@ VOCABULARY = [
         "id": "nat_mountain",
         "category": "nature",
         "hindi": "पहाड़ / पर्वत",
+        "english": "Mountain / Hill",
         "emoji": "⛰️",
         "translations": {
             "santhali": {"dev": "बुरु", "native": "ᱵᱩᱨᱩ", "phonetic": "Buru"},
@@ -472,6 +498,7 @@ VOCABULARY = [
         "id": "nat_rain",
         "category": "nature",
         "hindi": "बारिश / वर्षा",
+        "english": "Rain",
         "emoji": "🌧️",
         "translations": {
             "santhali": {"dev": "दाः जाड़ी", "native": "ᱫᱟᱜ ᱡᱟᱹᱲᱤ", "phonetic": "Daag Jari"},
@@ -491,6 +518,7 @@ VOCABULARY = [
         "id": "food_rice",
         "category": "food",
         "hindi": "चावल / भात",
+        "english": "Rice / Cooked Rice",
         "emoji": "🍚",
         "translations": {
             "santhali": {"dev": "दाका (भात) / चाउले (चावल)", "native": "ᱫᱟᱠᱟ", "phonetic": "Daka / Chaule"},
@@ -508,6 +536,7 @@ VOCABULARY = [
         "id": "food_mango",
         "category": "food",
         "hindi": "आम",
+        "english": "Mango",
         "emoji": "🥭",
         "translations": {
             "santhali": {"dev": "उल", "native": "ᱩᱞ", "phonetic": "Ul"},
@@ -525,6 +554,7 @@ VOCABULARY = [
         "id": "food_milk",
         "category": "food",
         "hindi": "दूध",
+        "english": "Milk",
         "emoji": "🥛",
         "translations": {
             "santhali": {"dev": "तोवा", "native": "ᱛᱳᱣᱟ", "phonetic": "Towa"},
@@ -542,6 +572,7 @@ VOCABULARY = [
         "id": "food_bread",
         "category": "food",
         "hindi": "रोटी",
+        "english": "Bread / Roti",
         "emoji": "🫓",
         "translations": {
             "santhali": {"dev": "पीठा / रोटी", "native": "ᱯᱤᱴᱷᱟᱹ", "phonetic": "Pitha / Roti"},
@@ -561,6 +592,7 @@ VOCABULARY = [
         "id": "num_1",
         "category": "numbers",
         "hindi": "एक (1)",
+        "english": "One (1)",
         "emoji": "1️⃣",
         "translations": {
             "santhali": {"dev": "मित् (१)", "native": "ᱢᱤᱫ", "phonetic": "Mit'"},
@@ -578,6 +610,7 @@ VOCABULARY = [
         "id": "num_2",
         "category": "numbers",
         "hindi": "दो (2)",
+        "english": "Two (2)",
         "emoji": "2️⃣",
         "translations": {
             "santhali": {"dev": "बार (२)", "native": "ᱵᱟᱨ", "phonetic": "Bar"},
@@ -595,6 +628,7 @@ VOCABULARY = [
         "id": "num_3",
         "category": "numbers",
         "hindi": "तीन (3)",
+        "english": "Three (3)",
         "emoji": "3️⃣",
         "translations": {
             "santhali": {"dev": "पे (३)", "native": "ᱯᱮ", "phonetic": "Pe"},
@@ -612,6 +646,7 @@ VOCABULARY = [
         "id": "num_4",
         "category": "numbers",
         "hindi": "चार (4)",
+        "english": "Four (4)",
         "emoji": "4️⃣",
         "translations": {
             "santhali": {"dev": "पोन (४)", "native": "ᱯᱳᱱ", "phonetic": "Pon"},
@@ -629,6 +664,7 @@ VOCABULARY = [
         "id": "num_5",
         "category": "numbers",
         "hindi": "पाँच (5)",
+        "english": "Five (5)",
         "emoji": "5️⃣",
         "translations": {
             "santhali": {"dev": "मोणे (५)", "native": "ᱢᱚᱬᱮ", "phonetic": "Mone"},
@@ -646,6 +682,7 @@ VOCABULARY = [
         "id": "num_10",
         "category": "numbers",
         "hindi": "दस (10)",
+        "english": "Ten (10)",
         "emoji": "🔟",
         "translations": {
             "santhali": {"dev": "गेल (१०)", "native": "ᱜᱮᱞ", "phonetic": "Gel"},
@@ -665,6 +702,7 @@ VOCABULARY = [
         "id": "col_red",
         "category": "colors",
         "hindi": "लाल रंग",
+        "english": "Red / Red Color",
         "emoji": "🔴",
         "translations": {
             "santhali": {"dev": "आराः", "native": "ᱟᱨᱟᱜ", "phonetic": "Aaraag"},
@@ -682,6 +720,7 @@ VOCABULARY = [
         "id": "col_green",
         "category": "colors",
         "hindi": "हरा रंग",
+        "english": "Green / Green Color",
         "emoji": "🟢",
         "translations": {
             "santhali": {"dev": "हरियाड़", "native": "ᱦᱟᱹᱨᱭᱟᱹᱲ", "phonetic": "Hariyar"},
@@ -699,6 +738,7 @@ VOCABULARY = [
         "id": "col_yellow",
         "category": "colors",
         "hindi": "पीला रंग",
+        "english": "Yellow / Yellow Color",
         "emoji": "🟡",
         "translations": {
             "santhali": {"dev": "सासांग", "native": "ᱥᱟᱥᱟᱝ", "phonetic": "Sasang"},
@@ -716,6 +756,7 @@ VOCABULARY = [
         "id": "col_white",
         "category": "colors",
         "hindi": "सफेद (उजला) रंग",
+        "english": "White / White Color",
         "emoji": "⚪",
         "translations": {
             "santhali": {"dev": "पोंड", "native": "ᱯᱳᱸᱰ", "phonetic": "Pond"},
@@ -733,6 +774,7 @@ VOCABULARY = [
         "id": "col_black",
         "category": "colors",
         "hindi": "काला रंग",
+        "english": "Black / Black Color",
         "emoji": "⚫",
         "translations": {
             "santhali": {"dev": "हेंदे", "native": "ᱦᱮᱸᱫᱮ", "phonetic": "Hende"},
@@ -752,6 +794,7 @@ VOCABULARY = [
         "id": "body_eye",
         "category": "body",
         "hindi": "आँख / नयन",
+        "english": "Eye / Eyes",
         "emoji": "👁️",
         "translations": {
             "santhali": {"dev": "मेद", "native": "ᱢᱮᱫ", "phonetic": "Med"},
@@ -769,6 +812,7 @@ VOCABULARY = [
         "id": "body_hand",
         "category": "body",
         "hindi": "हाथ",
+        "english": "Hand / Hands",
         "emoji": "✋",
         "translations": {
             "santhali": {"dev": "ती", "native": "ᱛᱤ", "phonetic": "Ti"},
@@ -786,6 +830,7 @@ VOCABULARY = [
         "id": "body_ear",
         "category": "body",
         "hindi": "कान",
+        "english": "Ear / Ears",
         "emoji": "👂",
         "translations": {
             "santhali": {"dev": "लुथुर", "native": "ᱞᱩᱛᱷᱩᱨ", "phonetic": "Luthur"},
@@ -803,6 +848,7 @@ VOCABULARY = [
         "id": "body_head",
         "category": "body",
         "hindi": "सिर / माथा",
+        "english": "Head",
         "emoji": "👦",
         "translations": {
             "santhali": {"dev": "बोहोक", "native": "ᱵᱚᱦᱚᱜ", "phonetic": "Bohok"},
@@ -822,6 +868,7 @@ VOCABULARY = [
         "id": "act_play",
         "category": "actions",
         "hindi": "खेलना / खेलो",
+        "english": "Play / To play",
         "emoji": "⚽",
         "translations": {
             "santhali": {"dev": "एनेच", "native": "ᱮᱱᱮᱡ", "phonetic": "Enej"},
@@ -839,6 +886,7 @@ VOCABULARY = [
         "id": "act_eat",
         "category": "actions",
         "hindi": "खाना / खाओ",
+        "english": "Eat / To eat",
         "emoji": "🍽️",
         "translations": {
             "santhali": {"dev": "जोम / जोम मे", "native": "ᱡᱚᱢ", "phonetic": "Jom / Jom me"},
@@ -856,6 +904,7 @@ VOCABULARY = [
         "id": "act_drink",
         "category": "actions",
         "hindi": "पीना / पानी पियो",
+        "english": "Drink / To drink",
         "emoji": "🥤",
         "translations": {
             "santhali": {"dev": "ञूँ / दाः ञूँ मे", "native": "ᱧᱩ", "phonetic": "Nyun / Daah nyun me"},
@@ -873,6 +922,7 @@ VOCABULARY = [
         "id": "act_read",
         "category": "actions",
         "hindi": "पढ़ना / किताब पढ़ो",
+        "english": "Read / To read",
         "emoji": "📖",
         "translations": {
             "santhali": {"dev": "पाड़हाव / ओल-पाड़हाव", "native": "ᱯᱟᱲᱦᱟᱣ", "phonetic": "Parhaw"},
@@ -890,6 +940,7 @@ VOCABULARY = [
         "id": "act_dance",
         "category": "actions",
         "hindi": "नाचना / नृत्य करना",
+        "english": "Dance / To dance",
         "emoji": "💃",
         "translations": {
             "santhali": {"dev": "एनेच / रू-एनेच", "native": "ᱮᱱᱮᱡ", "phonetic": "Enej"},
@@ -909,6 +960,7 @@ VOCABULARY = [
         "id": "sch_book",
         "category": "school",
         "hindi": "किताब / पुस्तक",
+        "english": "Book",
         "emoji": "📚",
         "translations": {
             "santhali": {"dev": "पुथी", "native": "ᱯᱩᱛᱷᱤ", "phonetic": "Puthi"},
@@ -926,6 +978,7 @@ VOCABULARY = [
         "id": "sch_school",
         "category": "school",
         "hindi": "स्कूल / पाठशाला / विद्यालय",
+        "english": "School",
         "emoji": "🏫",
         "translations": {
             "santhali": {"dev": "बिरदागाड़ / इसकुल", "native": "ᱵᱤᱨᱫᱟᱹᱜᱟᱲ", "phonetic": "Birdagar / Iskul"},
@@ -945,6 +998,7 @@ VOCABULARY = [
         "id": "feel_happy",
         "category": "feelings",
         "hindi": "खुश / प्रसन्न / आनंद",
+        "english": "Happy / Joy",
         "emoji": "😄",
         "translations": {
             "santhali": {"dev": "रास्का", "native": "ᱨᱟᱹᱥᱠᱟᱹ", "phonetic": "Raska"},
@@ -962,6 +1016,7 @@ VOCABULARY = [
         "id": "feel_love",
         "category": "feelings",
         "hindi": "प्यार / स्नेह / दुलार",
+        "english": "Love / Affection",
         "emoji": "💖",
         "translations": {
             "santhali": {"dev": "दुलार", "native": "ᱫᱩᱞᱟᱹᱲ", "phonetic": "Dular"},
@@ -979,6 +1034,7 @@ VOCABULARY = [
         "id": "feel_beautiful",
         "category": "feelings",
         "hindi": "सुंदर / प्यारा / बहुत अच्छा",
+        "english": "Beautiful / Lovely / Nice",
         "emoji": "✨",
         "translations": {
             "santhali": {"dev": "मोज / नापाय", "native": "ᱢᱚᱡᱽ", "phonetic": "Moj / Napay"},
@@ -998,6 +1054,7 @@ VOCABULARY = [
         "id": "phr_what_is_your_name",
         "category": "phrases",
         "hindi": "तुम्हारा नाम क्या है?",
+        "english": "What is your name?",
         "emoji": "📛",
         "translations": {
             "santhali": {"dev": "आमाः ञुतुम दो चेत?", "native": "ᱟᱢᱟᱜ ᱧᱩᱛᱩᱢ ᱫᱚ ᱪᱮᱫ?", "phonetic": "Aamag nyutum do chet?"},
@@ -1015,6 +1072,7 @@ VOCABULARY = [
         "id": "phr_my_name_is",
         "category": "phrases",
         "hindi": "मेरा नाम ... है",
+        "english": "My name is ...",
         "emoji": "🙋",
         "translations": {
             "santhali": {"dev": "इञाः ञुतुम दो ... काना", "native": "ᱤᱧᱟᱜ ᱧᱩᱛᱩᱢ ᱫᱚ ... ᱠᱟᱱᱟ", "phonetic": "Injagh nyutum do ... kana"},
@@ -1032,6 +1090,7 @@ VOCABULARY = [
         "id": "phr_lets_play",
         "category": "phrases",
         "hindi": "चलो खेलते हैं!",
+        "english": "Let's play! / Come play",
         "emoji": "🎉",
         "translations": {
             "santhali": {"dev": "देलाबोन एनेच लागीत!", "native": "ᱫᱮᱞᱟᱵᱳᱱ ᱮᱱᱮᱡ ᱞᱟᱹᱜᱤᱫ!", "phonetic": "Delabon enej lagit!"},
@@ -1049,6 +1108,7 @@ VOCABULARY = [
         "id": "phr_where_are_you_going",
         "category": "phrases",
         "hindi": "तुम कहाँ जा रहे हो?",
+        "english": "Where are you going?",
         "emoji": "🚶",
         "translations": {
             "santhali": {"dev": "आम दो ओका तेम चालाः काना?", "native": "ᱟᱢ ᱫᱚ ᱚᱠᱟ ᱛᱮᱢ ᱪᱟᱞᱟᱜ ᱠᱟᱱᱟ?", "phonetic": "Aam do oka tem chalah kana?"},
@@ -1066,6 +1126,7 @@ VOCABULARY = [
         "id": "phr_i_want_water",
         "category": "phrases",
         "hindi": "मुझे पानी पीना है / मुझे पानी चाहिए",
+        "english": "I want water / I need water",
         "emoji": "🥤",
         "translations": {
             "santhali": {"dev": "इञ दो दाः ञूँ सानाइञ काना", "native": "ᱤᱧ ᱫᱚ ᱫᱟᱜ ᱧᱩ ᱥᱟᱱᱟᱹᱧ ᱠᱟᱱᱟ", "phonetic": "Inj do daah nyun sananj kana"},
@@ -1083,6 +1144,7 @@ VOCABULARY = [
         "id": "phr_this_is_good",
         "category": "phrases",
         "hindi": "यह बहुत अच्छा है!",
+        "english": "This is very good! / This is great",
         "emoji": "⭐",
         "translations": {
             "santhali": {"dev": "नोवा दो आडी मोज काना!", "native": "ᱱᱳᱣᱟ ᱫᱚ ᱟᱹᱰᱤ ᱢᱚᱡᱽ ᱠᱟᱱᱟ!", "phonetic": "Nowa do adi moj kana!"},

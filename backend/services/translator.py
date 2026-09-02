@@ -1,6 +1,6 @@
 """
 Translation & Linguistic Engine for BhashaSetu
-Handles Hindi -> 9 Indigenous & Regional Languages translation,
+Handles Hindi / English -> 9 Indigenous & Regional Languages translation,
 token-based matching, phrase breakdown, and multi-script transliteration.
 """
 
@@ -26,20 +26,35 @@ class BhashaSetuTranslator:
         return re.sub(r'\s+', ' ', cleaned).strip().lower()
 
     def _build_indexes(self):
-        """Index dictionary by normalized Hindi keys and token keywords."""
+        """Index dictionary by normalized Hindi & English keys and token keywords."""
         self.phrase_index = {}
         self.word_index = {}
 
         for item in self.vocabulary:
-            hindi_raw = item["hindi"]
-            # Split variants like "नमस्ते / जोहार" or "गाय (गौमाता)"
-            variants = re.split(r'[/,()]', hindi_raw)
-            for var in variants:
+            # 1. Hindi indexing
+            hindi_raw = item.get("hindi", "")
+            hindi_variants = re.split(r'[/,()]', hindi_raw)
+            for var in hindi_variants:
                 clean_var = self._clean_text(var)
                 if clean_var:
                     if clean_var not in self.phrase_index:
                         self.phrase_index[clean_var] = item
-                    # Also index single words
+                    words = clean_var.split()
+                    for w in words:
+                        if len(w) > 1:
+                            if w not in self.word_index:
+                                self.word_index[w] = []
+                            if item not in self.word_index[w]:
+                                self.word_index[w].append(item)
+
+            # 2. English indexing
+            english_raw = item.get("english", "")
+            english_variants = re.split(r'[/,()]', english_raw)
+            for var in english_variants:
+                clean_var = self._clean_text(var)
+                if clean_var:
+                    if clean_var not in self.phrase_index:
+                        self.phrase_index[clean_var] = item
                     words = clean_var.split()
                     for w in words:
                         if len(w) > 1:
@@ -50,7 +65,7 @@ class BhashaSetuTranslator:
 
     def translate_single(self, text: str, target_lang: str) -> Dict[str, Any]:
         """
-        Translates a Hindi text query to a specific target language.
+        Translates a Hindi or English text query to a specific target language.
         Returns translations with native script, devanagari, phonetics, and word breakdown.
         """
         target_lang = target_lang.lower().strip()
@@ -68,7 +83,7 @@ class BhashaSetuTranslator:
                 "success": True,
                 "match_type": "exact",
                 "source_text": text,
-                "matched_entry": item["hindi"],
+                "matched_entry": item.get("hindi", "") + " (" + item.get("english", "") + ")",
                 "target_lang": target_lang,
                 "target_lang_name": lang_meta["name_hi"],
                 "emoji": item.get("emoji", "✨"),
@@ -82,13 +97,13 @@ class BhashaSetuTranslator:
 
         # 2. Substring / partial match lookup
         for phrase, item in self.phrase_index.items():
-            if phrase in clean_query or clean_query in phrase:
+            if phrase in clean_query or (len(clean_query) >= 3 and clean_query in phrase):
                 tr = item["translations"].get(target_lang, {})
                 return {
                     "success": True,
                     "match_type": "partial",
                     "source_text": text,
-                    "matched_entry": item["hindi"],
+                    "matched_entry": item.get("hindi", "") + " (" + item.get("english", "") + ")",
                     "target_lang": target_lang,
                     "target_lang_name": lang_meta["name_hi"],
                     "emoji": item.get("emoji", "✨"),
@@ -165,7 +180,7 @@ class BhashaSetuTranslator:
     def _breakdown_phrase(self, item: Dict[str, Any], target_lang: str) -> List[Dict[str, str]]:
         tr = item["translations"].get(target_lang, {})
         return [{
-            "original": item["hindi"],
+            "original": item.get("hindi", "") + " (" + item.get("english", "") + ")",
             "devanagari": tr.get("dev", ""),
             "native": tr.get("native", tr.get("dev", "")),
             "phonetic": tr.get("phonetic", ""),
@@ -173,10 +188,7 @@ class BhashaSetuTranslator:
         }]
 
     def translate_all_languages(self, text: str) -> Dict[str, Any]:
-        """
-        Translates the given Hindi query across all 9 languages simultaneously!
-        Delightful for kids to compare.
-        """
+        """Translates the given text query across all 9 languages simultaneously."""
         results = {}
         for lang_id in self.languages:
             results[lang_id] = self.translate_single(text, lang_id)
@@ -192,17 +204,16 @@ class BhashaSetuTranslator:
         return [item for item in self.vocabulary if item.get("category") == category_id]
 
     def search_dictionary(self, query: str) -> List[Dict[str, Any]]:
-        """Searches vocabulary in Hindi or any target language phonetic/script."""
+        """Searches vocabulary in Hindi, English or any target language phonetic/script."""
         q = self._clean_text(query)
         if not q:
             return self.vocabulary[:12]
 
         results = []
         for item in self.vocabulary:
-            if q in self._clean_text(item["hindi"]):
+            if q in self._clean_text(item.get("hindi", "")) or q in self._clean_text(item.get("english", "")):
                 results.append(item)
                 continue
-            # Search translations
             for lang_id, tr in item["translations"].items():
                 if q in self._clean_text(tr.get("dev", "")) or q in tr.get("phonetic", "").lower():
                     results.append(item)
