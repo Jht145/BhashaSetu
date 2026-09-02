@@ -185,7 +185,18 @@ $('soundToggle').addEventListener('click', function() {
   toast(soundEnabled ? 'Happy sounds are on!' : 'Happy sounds are off.');
 });
 
-$('mobileMenu').addEventListener('click', () => $('navigation').classList.toggle('open'));
+$('mobileMenu').addEventListener('click', (e) => {
+  e.stopPropagation();
+  $('navigation').classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+  const nav = $('navigation');
+  const btn = $('mobileMenu');
+  if (nav && nav.classList.contains('open') && !nav.contains(e.target) && e.target !== btn) {
+    nav.classList.remove('open');
+  }
+});
 
 document.querySelectorAll('#navigation a').forEach(a => {
   a.addEventListener('click', () => $('navigation').classList.remove('open'));
