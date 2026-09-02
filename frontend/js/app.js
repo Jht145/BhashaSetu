@@ -86,6 +86,7 @@ const languageData = [
 const $ = (id) => document.getElementById(id);
 
 const hindiText = $('hindiText');
+const sourceLanguage = $('sourceLanguage');
 const targetLanguage = $('targetLanguage');
 const translatedText = $('translatedText');
 const resultLabel = $('resultLabel');
@@ -148,6 +149,7 @@ async function translate() {
     return;
   }
 
+  const srcLang = sourceLanguage ? sourceLanguage.value : 'auto';
   const language = targetLanguage.value.toLowerCase();
   resultLabel.textContent = `In ${targetLanguage.value} ⏳`;
   translatedText.textContent = 'अनुवाद हो रहा है... ✨';
@@ -160,7 +162,7 @@ async function translate() {
       body: JSON.stringify({
         text: word,
         target_language: language,
-        source_language: 'hin_Deva'
+        source_language: srcLang
       })
     });
 
@@ -256,13 +258,28 @@ hindiText.addEventListener('keydown', (e) => {
   }
 });
 
+if (sourceLanguage) {
+  sourceLanguage.addEventListener('change', translate);
+}
 targetLanguage.addEventListener('change', translate);
 
 $('speakInput').addEventListener('click', () => speak(hindiText.value, 'hi-IN'));
 $('speakResult').addEventListener('click', () => speak(translatedText.textContent));
 
 $('saveWord').addEventListener('click', () => toast('⭐ Saved! Your word collection is growing.'));
-$('swapBtn').addEventListener('click', () => toast('Hindi is the starting language for this BhashaSetu prototype.'));
+$('swapBtn').addEventListener('click', () => {
+  if (sourceLanguage && sourceLanguage.value === 'auto') {
+    sourceLanguage.value = 'eng';
+    toast('Source set to English.');
+  } else if (sourceLanguage && sourceLanguage.value === 'eng') {
+    sourceLanguage.value = 'hinglish';
+    toast('Source set to Hinglish.');
+  } else if (sourceLanguage) {
+    sourceLanguage.value = 'auto';
+    toast('Source set to Auto-Detect.');
+  }
+  translate();
+});
 
 $('soundToggle').addEventListener('click', function() {
   soundEnabled = !soundEnabled;

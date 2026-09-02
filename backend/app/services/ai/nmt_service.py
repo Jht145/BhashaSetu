@@ -224,6 +224,10 @@ class OfflineIndicTransService:
                 results.append(("", None, 0.0, 1.0))
                 continue
 
+            # If input is English or Hinglish (Latin alphabet), normalize to Hindi Devanagari first
+            if IndicTextProcessor.is_latin_text(clean_text):
+                clean_text = IndicTextProcessor.convert_english_or_hinglish_to_hindi(clean_text)
+
             # Identity check
             if normalize_code(source_lang) == normalize_code(target_lang):
                 latency = max((time.time() - start_time) * 1000, 10.0)

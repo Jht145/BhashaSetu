@@ -81,9 +81,14 @@
         <div class="language-row">
           <div class="lang-field">
             <label for="sourceLanguage">I want to translate from</label>
-            <select id="sourceLanguage"><option>Hindi (हिन्दी)</option></select>
+            <select id="sourceLanguage">
+              <option value="auto">Auto Detect (Hindi / English / Hinglish)</option>
+              <option value="hin">Hindi (हिन्दी)</option>
+              <option value="eng">English</option>
+              <option value="hinglish">Hinglish (रोमन हिन्दी)</option>
+            </select>
           </div>
-          <button class="arrow" id="swapBtn" title="Hindi is the source language in this prototype" aria-label="Swap languages">➜</button>
+          <button class="arrow" id="swapBtn" title="Switch or reset language" aria-label="Swap languages">➜</button>
           <div class="lang-field">
             <label for="targetLanguage">I want to translate to</label>
             <select id="targetLanguage">
@@ -102,11 +107,11 @@
         
         <div class="translate-boxes">
           <div class="text-card">
-            <label for="hindiText">Write in Hindi ✍️</label>
-            <textarea id="hindiText" placeholder="जैसे: नमस्ते">नमस्ते</textarea>
+            <label for="hindiText">Write in Hindi / English / Hinglish ✍️</label>
+            <textarea id="hindiText" placeholder="जैसे: नमस्ते, Water is life, Mera naam Dev hai, Ped aur jungle">नमस्ते</textarea>
             <div class="card-actions">
-              <button class="round-icon" id="speakInput" aria-label="Listen to Hindi text">🔊 Listen</button>
-              <span class="small-note">Try: नमस्ते, धन्यवाद, पानी</span>
+              <button class="round-icon" id="speakInput" aria-label="Listen to input text">🔊 Listen</button>
+              <span class="small-note">Try: नमस्ते, Water, Ped, Mera naam</span>
             </div>
           </div>
           <div class="text-card">
