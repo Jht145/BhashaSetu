@@ -15,11 +15,11 @@ if BASE_DIR not in sys.path:
 
 def main():
     print("=" * 60)
-    print("🌉 भाषा सेतु (BhashaSetu) - Hindi to Tribal & Regional Languages")
+    print(">> BhashaSetu - Hindi to Tribal & Regional Languages")
     print("=" * 60)
-    print("✨ Serving web app at: http://127.0.0.1:8000")
-    print("✨ API documentation: http://127.0.0.1:8000/docs")
-    print("✨ Press Ctrl+C to stop the server.")
+    print("[+] Serving web app at: http://127.0.0.1:8000")
+    print("[+] API documentation: http://127.0.0.1:8000/docs")
+    print("[+] Press Ctrl+C to stop the server.")
     print("=" * 60)
 
     uvicorn.run("backend.app.main:app", host="127.0.0.1", port=8000, reload=True)
