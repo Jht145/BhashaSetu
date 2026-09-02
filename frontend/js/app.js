@@ -246,14 +246,23 @@ async function translate() {
         translatedText.dataset.speakPhonetic = phonetic || '';
         translatedText.dataset.speakText = output;
 
-        if (phonetic && phonetic !== output && (language === 'santhali' || language === 'sat')) {
-          translatedText.innerHTML = `<span class="native-out" style="font-size: 1.15em; font-weight: 600;">${escapeHtml(output)}</span><br><small style="font-size: 0.85em; opacity: 0.85; display: inline-block; margin-top: 4px;">(उच्चारण: ${escapeHtml(phonetic)}${dev && dev !== output ? ' | देवनागरी: ' + escapeHtml(dev) : ''})</small>`;
-        } else if (dev && dev !== output) {
-          translatedText.innerHTML = `<span class="native-out" style="font-size: 1.15em; font-weight: 600;">${escapeHtml(output)}</span><br><small style="font-size: 0.85em; opacity: 0.85; display: inline-block; margin-top: 4px;">(देवनागरी: ${escapeHtml(dev)})</small>`;
-        } else {
-          translatedText.textContent = output;
+        let html = `<div class="native-output-text" style="font-size: 1.35em; font-weight: 700; line-height: 1.45; color: #1b5e20; word-break: break-word;">${escapeHtml(output)}</div>`;
+        let subItems = [];
+
+        if (phonetic && phonetic.trim().toLowerCase() !== output.trim().toLowerCase()) {
+          subItems.push(`<div style="font-size: 0.88em; color: #424242; margin-top: 6px;"><strong>🔊 उच्चारण (Pronunciation):</strong> <span style="color: #004d40; font-weight: 600;">${escapeHtml(phonetic)}</span></div>`);
         }
 
+        const isIndigenousScript = (language === 'santhali' || language === 'sat' || language === 'ho' || language === 'hoc');
+        if (isIndigenousScript && dev && dev.trim().toLowerCase() !== output.trim().toLowerCase()) {
+          subItems.push(`<div style="font-size: 0.88em; color: #d84315; margin-top: 4px;"><strong>🔤 देवनागरी लिपि:</strong> <span>${escapeHtml(dev)}</span></div>`);
+        }
+
+        if (subItems.length > 0) {
+          html += `<div class="script-details" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.12); text-align: left;">${subItems.join('')}</div>`;
+        }
+
+        translatedText.innerHTML = html;
         translatedText.classList.remove('placeholder');
         resultLabel.textContent = `In ${targetLanguage.value} ✨`;
         toast(`Wonderful! Here is your ${targetLanguage.value} translation.`);

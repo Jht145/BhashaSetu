@@ -1,6 +1,6 @@
 """
 Lightweight Indic Text Processor for IndicTrans2 Normalization,
-English-to-Hindi Translation, and Hinglish / Romanized Hindi Transliteration.
+English-to-Hindi Translation, and High-Precision Hinglish / Romanized Hindi Transliteration.
 """
 
 import re
@@ -241,9 +241,31 @@ HINGLISH_TO_HINDI: Dict[str, str] = {
     "raha": "रहा",
     "rahi": "रही",
     "rahe": "रहे",
+    "adarsh": "आदर्श",
+    "aadarsh": "आदर्श",
+    "sharma": "शर्मा",
+    "sharm": "शर्म",
+    "kumar": "कुमार",
+    "singh": "सिंह",
+    "verma": "वर्मा",
+    "gupta": "गुप्ता",
+    "yadav": "यादव",
+    "mahato": "महतो",
+    "mahto": "महतो",
+    "munda": "मुंडा",
+    "soren": "सोरेन",
+    "marandi": "मरांडी",
+    "tudu": "टुडू",
+    "hembram": "हेम्ब्रम",
+    "besra": "बेसरा",
+    "murmu": "मुर्मू",
     "dev": "देव",
     "rahul": "राहुल",
     "amit": "अमित",
+    "deepak": "दीपक",
+    "priya": "प्रिया",
+    "neha": "नेहा",
+    "pooja": "पूजा",
     "gaandu": "गांडू",
     "gandu": "गांडू",
     "pagal": "पागल",
@@ -253,17 +275,26 @@ HINGLISH_TO_HINDI: Dict[str, str] = {
     "ranchi": "राँची",
 }
 
-# Phonetic Latin to Devanagari multi-char rules
-LATIN_TO_DEVA_RULES = [
-    ("shh", "ष्"), ("kh", "ख"), ("gh", "घ"), ("ch", "च"), ("chh", "छ"),
+# Consonant cluster rules for natural phonetic transliteration
+INITIAL_VOWELS = [
+    ("aa", "आ"), ("ee", "ई"), ("oo", "ऊ"), ("ai", "ऐ"), ("au", "औ"),
+    ("a", "अ"), ("i", "इ"), ("u", "उ"), ("e", "ए"), ("o", "ओ"),
+]
+
+CONSONANTS = [
+    ("shh", "ष्"), ("chh", "छ"), ("kh", "ख"), ("gh", "घ"), ("ch", "च"),
     ("jh", "झ"), ("th", "थ"), ("dh", "ध"), ("ph", "फ"), ("bh", "भ"),
     ("sh", "श"), ("gn", "ज्ञ"), ("gy", "ज्ञ"), ("tr", "त्र"), ("shr", "श्र"),
-    ("aa", "ा"), ("ee", "ी"), ("oo", "ू"), ("ai", "ै"), ("au", "ौ"),
-    ("a", "ा"), ("i", "ि"), ("u", "ु"), ("e", "े"), ("o", "ो"),
     ("k", "क"), ("g", "ग"), ("j", "ज"), ("t", "त"), ("d", "द"),
     ("n", "न"), ("p", "प"), ("b", "ब"), ("m", "म"), ("y", "य"),
     ("r", "र"), ("l", "ल"), ("v", "व"), ("w", "व"), ("s", "स"),
     ("h", "ह"), ("z", "ज़"), ("f", "फ़"),
+]
+
+MATRAS = [
+    ("aa", "ा"), ("ee", "ी"), ("oo", "ू"), ("ai", "ै"), ("au", "ौ"),
+    ("a", ""),   # Inherent vowel in Hindi (no matra)
+    ("i", "ि"), ("u", "ु"), ("e", "े"), ("o", "ो"),
 ]
 
 
@@ -273,9 +304,9 @@ class IndicTextProcessor:
         """Checks if input text contains Latin/ASCII alphabetical characters."""
         return bool(re.search(r'[a-zA-Z]', text))
 
-    @staticmethod
-    def transliterate_latin_word_to_devanagari(word: str) -> str:
-        """Phonetically transliterates an unknown Latin/Hinglish word to Devanagari."""
+    @classmethod
+    def transliterate_latin_word_to_devanagari(cls, word: str) -> str:
+        """Phonetically transliterates an unknown Latin/Hinglish word to natural Devanagari."""
         w = word.lower().strip()
         if not w:
             return ""
@@ -284,29 +315,46 @@ class IndicTextProcessor:
         if w in ENGLISH_TO_HINDI:
             return ENGLISH_TO_HINDI[w]
 
-        # Syllable transducer
         res = ""
         i = 0
         n = len(w)
-        while i < n:
-            matched = False
-            for pat, repl in LATIN_TO_DEVA_RULES:
-                if w.startswith(pat, i):
-                    res += repl
-                    i += len(pat)
-                    matched = True
-                    break
-            if not matched:
-                res += w[i]
-                i += 1
 
-        # Fix leading vowel signs to independent vowels
-        vowel_map = {
-            "ा": "आ", "ि": "इ", "ी": "ई", "ु": "उ", "ू": "ऊ",
-            "े": "ए", "ै": "ऐ", "ो": "ओ", "ौ": "औ"
-        }
-        if res and res[0] in vowel_map:
-            res = vowel_map[res[0]] + res[1:]
+        # Check initial vowel
+        for v_pat, v_repl in INITIAL_VOWELS:
+            if w.startswith(v_pat):
+                res += v_repl
+                i += len(v_pat)
+                break
+
+        while i < n:
+            # Match consonant
+            c_matched = False
+            for c_pat, c_repl in CONSONANTS:
+                if w.startswith(c_pat, i):
+                    res += c_repl
+                    i += len(c_pat)
+                    c_matched = True
+
+                    # After consonant, look for matra
+                    for m_pat, m_repl in MATRAS:
+                        if w.startswith(m_pat, i):
+                            res += m_repl
+                            i += len(m_pat)
+                            break
+                    break
+
+            if not c_matched:
+                # Vowel not preceded by consonant
+                v_matched = False
+                for v_pat, v_repl in INITIAL_VOWELS:
+                    if w.startswith(v_pat, i):
+                        res += v_repl
+                        i += len(v_pat)
+                        v_matched = True
+                        break
+                if not v_matched:
+                    res += w[i]
+                    i += 1
 
         return res
 
@@ -314,21 +362,18 @@ class IndicTextProcessor:
     def convert_english_or_hinglish_to_hindi(cls, text: str) -> str:
         """
         Translates or transliterates English/Hinglish text to standard Devanagari Hindi.
-        Example: 'dev gaandu hai' -> 'देव गांडू है'
+        Example: 'adarsh sharma' -> 'आदर्श शर्मा'
         Example: 'water and tree' -> 'पानी और पेड़'
-        Example: 'hello my friend' -> 'नमस्ते मेरा दोस्त'
         """
         if not cls.is_latin_text(text):
             return text.strip()
 
         clean_lower = text.strip().lower()
-        # 1. Exact phrase check in English or Hinglish dictionary
         if clean_lower in ENGLISH_TO_HINDI:
             return ENGLISH_TO_HINDI[clean_lower]
         if clean_lower in HINGLISH_TO_HINDI:
             return HINGLISH_TO_HINDI[clean_lower]
 
-        # 2. Token-by-token transformation
         tokens = re.findall(r'[a-zA-Z0-9\u0900-\u097F]+|[^\w\s]', text, re.UNICODE)
         translated_tokens = []
 
@@ -341,7 +386,6 @@ class IndicTextProcessor:
             elif tok_lower in HINGLISH_TO_HINDI:
                 translated_tokens.append(HINGLISH_TO_HINDI[tok_lower])
             elif re.match(r'^[a-zA-Z]+$', tok):
-                # Out-of-vocabulary phonetic conversion
                 translated_tokens.append(cls.transliterate_latin_word_to_devanagari(tok_lower))
             else:
                 translated_tokens.append(tok)
@@ -355,7 +399,6 @@ class IndicTextProcessor:
         if not text:
             return ""
         
-        # Replace zero-width chars and special spaces
         cleaned = text.replace("\u200b", "").replace("\u200c", "").replace("\u200d", "")
         cleaned = re.sub(r'[\r\n\t]+', ' ', cleaned)
         cleaned = re.sub(r'\s+', ' ', cleaned).strip()
@@ -367,10 +410,7 @@ class IndicTextProcessor:
 
     @staticmethod
     def format_input_for_indictrans2(text: str, src_tag: str, tgt_tag: str) -> str:
-        """
-        Formats normalized text with IndicTrans2 source and target prefix tags.
-        Example: '__hin_Deva__ __sat_Olck__ नमस्ते'
-        """
+        """Formats normalized text with IndicTrans2 source and target prefix tags."""
         clean_text = IndicTextProcessor.normalize_text(text, src_tag)
         return f"__{src_tag}__ __{tgt_tag}__ {clean_text}"
 
@@ -380,10 +420,8 @@ class IndicTextProcessor:
         if not raw_output:
             return ""
         
-        # Strip any language tag remnants
         cleaned = re.sub(r'__\w+_\w+__', '', raw_output)
         cleaned = re.sub(r'<unk>', '', cleaned)
         cleaned = re.sub(r'\s+', ' ', cleaned).strip()
-        # Format spacing before punctuation
         cleaned = re.sub(r'\s+([,।\.!?;:॥᱾᱿])', r'\1', cleaned)
         return cleaned
