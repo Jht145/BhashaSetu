@@ -1,7 +1,7 @@
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
-from app.core.config import settings
+from backend.app.core.config import settings
 
 # SQLite compatibility arguments for foreign keys and multithreading
 connect_args = {}

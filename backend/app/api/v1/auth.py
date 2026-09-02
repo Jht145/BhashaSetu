@@ -4,16 +4,16 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.core.database import get_db
-from app.core.security import (
+from backend.app.core.database import get_db
+from backend.app.core.security import (
     verify_password,
     get_password_hash,
     create_access_token,
     oauth2_scheme,
     decode_token,
 )
-from app.models.user import User, UserRole, District, School
-from app.schemas.auth import (
+from backend.app.models.user import User, UserRole, District, School
+from backend.app.schemas.auth import (
     Token,
     UserCreate,
     UserResponse,

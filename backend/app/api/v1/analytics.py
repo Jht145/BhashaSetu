@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
-from app.core.database import get_db
-from app.models.user import User, District, School
-from app.models.translation import TranslationLog
-from app.models.sync import DeltaSyncLog, DeviceTelemetry
-from app.models.hitl import ReviewTask
+from backend.app.core.database import get_db
+from backend.app.models.user import User, District, School
+from backend.app.models.translation import TranslationLog
+from backend.app.models.sync import DeltaSyncLog, DeviceTelemetry
+from backend.app.models.hitl import ReviewTask
 
 router = APIRouter()
 

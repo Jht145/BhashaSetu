@@ -5,18 +5,18 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.core.database import get_db
-from app.models.sync import OfflinePackage, DeltaSyncLog, DeviceTelemetry
-from app.models.curriculum import CurriculumSubject, Concept
-from app.schemas.sync import (
+from backend.app.core.database import get_db
+from backend.app.models.sync import OfflinePackage, DeltaSyncLog, DeviceTelemetry
+from backend.app.models.curriculum import CurriculumSubject, Concept
+from backend.app.schemas.sync import (
     OfflinePackageCreate,
     OfflinePackageResponse,
     DeltaSyncUploadRequest,
     DeltaSyncResponse,
     DeviceTelemetryPayload,
 )
-from app.services.packager_service import PackagerService
-from app.services.sync_service import SyncService
+from backend.app.services.packager_service import PackagerService
+from backend.app.services.sync_service import SyncService
 
 router = APIRouter()
 

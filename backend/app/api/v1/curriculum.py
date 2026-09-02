@@ -3,15 +3,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from app.core.database import get_db
-from app.models.curriculum import (
+from backend.app.core.database import get_db
+from backend.app.models.curriculum import (
     CurriculumSubject,
     Chapter,
     Concept,
     VernacularConcept,
     MultimodalAsset,
 )
-from app.schemas.curriculum import (
+from backend.app.schemas.curriculum import (
     SubjectCreate,
     SubjectResponse,
     ChapterCreate,
@@ -21,8 +21,8 @@ from app.schemas.curriculum import (
     VernacularConceptResponse,
     PedagogySimplificationRequest,
 )
-from app.services.ai.pedagogy_rag import PedagogyRAGEngine
-from app.services.ai.tts_service import TTSService
+from backend.app.services.ai.pedagogy_rag import PedagogyRAGEngine
+from backend.app.services.ai.tts_service import TTSService
 
 router = APIRouter()
 

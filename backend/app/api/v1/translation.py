@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import get_db
-from app.models.translation import TranslationLog
-from app.schemas.translation import (
+from backend.app.core.database import get_db
+from backend.app.models.translation import TranslationLog
+from backend.app.schemas.translation import (
     TranslationRequest,
     TranslationResponse,
     TransliterationRequest,
     TransliterationResponse,
 )
-from app.services.ai.nmt_service import NMTService
-from app.services.ai.olchiki_service import OlChikiService
+from backend.app.services.ai.nmt_service import NMTService
+from backend.app.services.ai.olchiki_service import OlChikiService
 
 router = APIRouter()
 

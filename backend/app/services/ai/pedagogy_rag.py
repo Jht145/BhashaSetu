@@ -5,8 +5,8 @@ grounded in Jharkhand tribal folklore, festivals, and local nature.
 """
 
 from typing import Dict, Any
-from app.services.ai.nmt_service import NMTService
-from app.services.ai.olchiki_service import OlChikiService
+from backend.app.services.ai.nmt_service import NMTService
+from backend.app.services.ai.olchiki_service import OlChikiService
 
 CULTURAL_METAPHORS = {
     "plants_trees": "जैसे सरहुल (Sarhul) में हम साल (सखुआ) के फूलों की पूजा कर प्रकृति का सम्मान करते हैं, वैसे ही हर पौधा और पेड़ हमें सांस लेने के लिए हवा और फल देता है।",

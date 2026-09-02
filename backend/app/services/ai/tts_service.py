@@ -9,7 +9,7 @@ import wave
 import struct
 import math
 from typing import Tuple
-from app.core.config import settings
+from backend.app.core.config import settings
 
 
 class TTSService:

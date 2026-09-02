@@ -49,6 +49,10 @@ app.include_router(web_router, prefix="/api")
 # 2. Register PRD Engineering Specification API Router (/api/v1/auth, /api/v1/curriculum, etc.)
 app.include_router(v1_router, prefix=settings.API_V1_STR)
 
+# Direct root WebSocket endpoint for duplex classroom speech streaming
+from backend.app.api.v1.speech import websocket_classroom_speech
+app.add_api_websocket_route("/ws/classroom-speech", websocket_classroom_speech)
+
 
 @app.get("/health", tags=["System"])
 async def health_check():

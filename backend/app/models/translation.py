@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean
-from app.core.database import Base
+from backend.app.core.database import Base
 
 
 class TranslationLog(Base):

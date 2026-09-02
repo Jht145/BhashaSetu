@@ -6,18 +6,18 @@ vernacular pedagogy entries (Santhali in Ol Chiki, Mundari), and sample users.
 
 import asyncio
 from sqlalchemy.future import select
-from app.core.database import AsyncSessionLocal, init_db
-from app.core.security import get_password_hash
-from app.models.user import User, UserRole, District, School
-from app.models.curriculum import (
+from backend.app.core.database import AsyncSessionLocal, init_db
+from backend.app.core.security import get_password_hash
+from backend.app.models.user import User, UserRole, District, School
+from backend.app.models.curriculum import (
     CurriculumSubject,
     Chapter,
     Concept,
     VernacularConcept,
     MultimodalAsset,
 )
-from app.models.hitl import ReviewTask, ReviewStatus
-from app.services.ai.tts_service import TTSService
+from backend.app.models.hitl import ReviewTask, ReviewStatus
+from backend.app.services.ai.tts_service import TTSService
 
 
 async def seed():

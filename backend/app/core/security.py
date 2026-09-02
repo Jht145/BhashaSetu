@@ -3,7 +3,7 @@ from typing import Optional, Union, Any
 from jose import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from app.core.config import settings
+from backend.app.core.config import settings
 import bcrypt
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")

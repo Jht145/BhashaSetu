@@ -5,16 +5,16 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.core.config import settings
-from app.core.database import get_db
-from app.models.hitl import ReviewTask, ReviewStatus, CorrectionHistory, LoRADatasetExport
-from app.models.user import User, UserRole
-from app.schemas.hitl import (
+from backend.app.core.config import settings
+from backend.app.core.database import get_db
+from backend.app.models.hitl import ReviewTask, ReviewStatus, CorrectionHistory, LoRADatasetExport
+from backend.app.models.user import User, UserRole
+from backend.app.schemas.hitl import (
     ReviewTaskResponse,
     ReviewTaskSubmit,
     LoRADatasetExportResponse,
 )
-from app.api.v1.auth import get_current_user
+from backend.app.api.v1.auth import get_current_user
 
 router = APIRouter()
 

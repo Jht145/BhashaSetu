@@ -6,8 +6,8 @@ Handles intermittent connection uploads from Android WorkManager.
 from datetime import datetime, timezone
 from typing import List, Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.sync import DeltaSyncLog, DeviceTelemetry
-from app.schemas.sync import DeltaSyncItem, DeviceTelemetryPayload
+from backend.app.models.sync import DeltaSyncLog, DeviceTelemetry
+from backend.app.schemas.sync import DeltaSyncItem, DeviceTelemetryPayload
 
 
 class SyncService:

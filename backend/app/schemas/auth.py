@@ -1,7 +1,7 @@
 from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, ConfigDict
-from app.models.user import UserRole
+from backend.app.models.user import UserRole
 
 
 class Token(BaseModel):

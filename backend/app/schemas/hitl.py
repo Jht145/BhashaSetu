@@ -1,7 +1,7 @@
 from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict
-from app.models.hitl import ReviewStatus
+from backend.app.models.hitl import ReviewStatus
 
 
 class ReviewTaskResponse(BaseModel):
