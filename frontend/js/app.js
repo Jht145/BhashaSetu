@@ -1,72 +1,135 @@
 /**
  * BhashaSetu (भाषा सेतु) - Client Application Script
- * Type: JS (JavaScript)
+ * Full Bilingual & Multi-Language Vernacular Learning Platform
  */
 
-// Phrasebook Data
+// Phrasebook Data (Bilingual: Hindi & English -> Tribal / Regional Languages)
 const phrasebook = {
   Santhali: {
-    'नमस्ते': 'Johar',
-    'धन्यवाद': 'Johar / धन्यवाद',
-    'पानी': 'Daak\' / Water',
-    'तुम कैसे हो': 'Chet kana me?',
-    'मेरा नाम': 'Injań ñutum'
+    'नमस्ते': 'Johar (ᱡᱚᱦᱟᱨ)',
+    'hello': 'Johar (ᱡᱚᱦᱟᱨ)',
+    'hi': 'Johar (ᱡᱚᱦᱟᱨ)',
+    'धन्यवाद': 'Johar / Sarhao (ᱥᱟᱨᱦᱟᱣ)',
+    'thank you': 'Sarhao (ᱥᱟᱨᱦᱟᱣ)',
+    'thanks': 'Sarhao (ᱥᱟᱨᱦᱟᱣ)',
+    'पानी': 'Daak\' (ᱫᱟᱜ)',
+    'water': 'Daak\' (ᱫᱟᱜ)',
+    'तुम कैसे हो': 'Chet leka menama? (ᱪᱮᱫ ᱞᱮᱠᱟ ᱢᱮᱱᱟᱢᱟ?)',
+    'how are you': 'Chet leka menama? (ᱪᱮᱫ ᱞᱮᱠᱟ ᱢᱮᱱᱟᱢᱟ?)',
+    'मेरा नाम': 'Injań ñutum (ᱤᱧᱟᱜ ᱧᱩᱛᱩᱢ)',
+    'my name': 'Injań ñutum (ᱤᱧᱟᱜ ᱧᱩᱛᱩᱢ)'
   },
   Mundari: {
-    'नमस्ते': 'Johar',
-    'धन्यवाद': 'Johar',
-    'पानी': 'Da\' / Water',
-    'तुम कैसे हो': 'Am chetana?',
-    'मेरा नाम': 'Aing ren nutum'
+    'नमस्ते': 'Johar (जोहार)',
+    'hello': 'Johar (जोहार)',
+    'hi': 'Johar (जोहार)',
+    'धन्यवाद': 'Johar / Dhanyabad',
+    'thank you': 'Johar / Dhanyabad',
+    'thanks': 'Johar / Dhanyabad',
+    'पानी': 'Da\' (दाः)',
+    'water': 'Da\' (दाः)',
+    'तुम कैसे हो': 'Am chetana? (अम चेतना?)',
+    'how are you': 'Am chetana? (अम चेतना?)',
+    'मेरा नाम': 'Aing ren nutum',
+    'my name': 'Aing ren nutum'
   },
   Ho: {
-    'नमस्ते': 'Johar',
-    'धन्यवाद': 'Johar',
-    'पानी': 'Da\'',
-    'तुम कैसे हो': 'Am chekana?',
-    'मेरा नाम': 'Anga nutum'
+    'नमस्ते': 'Johar (𑢪𑣉𑢦𑢬𑣂)',
+    'hello': 'Johar (𑢪𑣉𑢦𑢬𑣂)',
+    'hi': 'Johar (𑢪𑣉𑢦𑢬𑣂)',
+    'धन्यवाद': 'Johar (𑢪𑣉𑢦𑢬𑣂)',
+    'thank you': 'Johar (𑢪𑣉𑢦𑢬𑣂)',
+    'thanks': 'Johar (𑢪𑣉𑢦𑢬𑣂)',
+    'पानी': 'Da\' (𑢵𑢁)',
+    'water': 'Da\' (𑢵𑢁)',
+    'तुम कैसे हो': 'Am chekana? (𑢁𑢪 𑢹𑣂𑢮𑢳𑢪)',
+    'how are you': 'Am chekana? (𑢁𑢪 𑢹𑣂𑢮𑢳𑢪)',
+    'मेरा नाम': 'Anga nutum (𑢁𑢬 𑢳𑢱𑢷𑢳)',
+    'my name': 'Anga nutum (𑢁𑢬 𑢳𑢱𑢷𑢳)'
   },
   Kurukh: {
-    'नमस्ते': 'Johar',
-    'धन्यवाद': 'Dhanyabad',
-    'पानी': 'Daa',
-    'तुम कैसे हो': 'Nin ekkan men?',
-    'मेरा नाम': 'En naame'
+    'नमस्ते': 'Johar / Godey (गोड़े)',
+    'hello': 'Johar / Godey (गोड़े)',
+    'hi': 'Johar / Godey (गोड़े)',
+    'धन्यवाद': 'Dhanyabad / Johar',
+    'thank you': 'Dhanyabad / Johar',
+    'thanks': 'Dhanyabad / Johar',
+    'पानी': 'Daa (दाअ)',
+    'water': 'Daa (दाअ)',
+    'तुम कैसे हो': 'Nin ekkan men? (नीन एकन मेन?)',
+    'how are you': 'Nin ekkan men? (नीन एकन मेन?)',
+    'मेरा नाम': 'En naame (एन नामे)',
+    'my name': 'En naame (एन नामे)'
   },
   Kharia: {
-    'नमस्ते': 'Johar',
-    'धन्यवाद': 'Johar',
-    'पानी': 'Daa',
-    'तुम कैसे हो': 'Am chetana?',
-    'मेरा नाम': 'Ing nam'
+    'नमस्ते': 'Johar (जोहार)',
+    'hello': 'Johar (जोहार)',
+    'hi': 'Johar (जोहार)',
+    'धन्यवाद': 'Johar / Dhanyabad',
+    'thank you': 'Johar / Dhanyabad',
+    'thanks': 'Johar / Dhanyabad',
+    'पानी': 'Daa (दाअ)',
+    'water': 'Daa (दाअ)',
+    'तुम कैसे हो': 'Am chetana? (अम चेतना?)',
+    'how are you': 'Am chetana? (अम चेतना?)',
+    'मेरा नाम': 'Ing nam (इंग नाम)',
+    'my name': 'Ing nam (इंग नाम)'
   },
   Khortha: {
-    'नमस्ते': 'Johar',
-    'धन्यवाद': 'Dhanyabad',
-    'पानी': 'Pani',
-    'तुम कैसे हो': 'Tu kaise he?',
-    'मेरा नाम': 'Hamar naav'
+    'नमस्ते': 'Johar / Pranam (प्रनाम)',
+    'hello': 'Johar / Pranam (प्रनाम)',
+    'hi': 'Johar / Pranam (प्रनाम)',
+    'धन्यवाद': 'Dhanyabad (धन्यबाद)',
+    'thank you': 'Dhanyabad (धन्यबाद)',
+    'thanks': 'Dhanyabad (धन्यबाद)',
+    'पानी': 'Pani (पानी)',
+    'water': 'Pani (पानी)',
+    'तुम कैसे हो': 'Tu kaise he? (तोएं केसन ही?)',
+    'how are you': 'Tu kaise he? (तोएं केसन ही?)',
+    'मेरा नाम': 'Hamar naav (हामर नाव)',
+    'my name': 'Hamar naav (हामर नाव)'
   },
   Nagpuri: {
-    'नमस्ते': 'Johar',
-    'धन्यवाद': 'Dhanyabad',
-    'पानी': 'Pani',
-    'तुम कैसे हो': 'Tuin kaise hasa?',
-    'मेरा नाम': 'Mor naav'
+    'नमस्ते': 'Johar / Paylagi (पायलागी)',
+    'hello': 'Johar / Paylagi (पायलागी)',
+    'hi': 'Johar / Paylagi (पायलागी)',
+    'धन्यवाद': 'Dhanyabad (धन्यबाद)',
+    'thank you': 'Dhanyabad (धन्यबाद)',
+    'thanks': 'Dhanyabad (धन्यबाद)',
+    'पानी': 'Pani (पानी)',
+    'water': 'Pani (पानी)',
+    'तुम कैसे हो': 'Tuin kaise hasa? (तोर का हाल हे?)',
+    'how are you': 'Tuin kaise hasa? (तोर का हाल हे?)',
+    'मेरा नाम': 'Mor naav (मोर नाव)',
+    'my name': 'Mor naav (मोर नाव)'
   },
   Panchpargania: {
-    'नमस्ते': 'Johar',
-    'धन्यवाद': 'Dhanyabad',
-    'पानी': 'Pani',
-    'तुम कैसे हो': 'Tui kemon achis?',
-    'मेरा नाम': 'Mor nam'
+    'नमस्ते': 'Johar / Namaskar (नमस्कार)',
+    'hello': 'Johar / Namaskar (नमस्कार)',
+    'hi': 'Johar / Namaskar (नमस्कार)',
+    'धन्यवाद': 'Dhanyabad (धन्यबाद)',
+    'thank you': 'Dhanyabad (धन्यबाद)',
+    'thanks': 'Dhanyabad (धन्यबाद)',
+    'पानी': 'Pani (पानी / जल)',
+    'water': 'Pani (पानी / जल)',
+    'तुम कैसे हो': 'Tui kemon achis? (तोर केसन हाल?)',
+    'how are you': 'Tui kemon achis? (तोर केसन हाल?)',
+    'मेरा नाम': 'Mor nam (मोर नाम)',
+    'my name': 'Mor nam (मोर नाम)'
   },
   Kurmali: {
-    'नमस्ते': 'Johar',
-    'धन्यवाद': 'Dhanyabad',
-    'पानी': 'Pani',
-    'तुम कैसे हो': 'Tui kemne achis?',
-    'मेरा नाम': 'Mor nam'
+    'नमस्ते': 'Johar / Pay Lagon (पांय लागों)',
+    'hello': 'Johar / Pay Lagon (पांय लागों)',
+    'hi': 'Johar / Pay Lagon (पांय लागों)',
+    'धन्यवाद': 'Dhanyabad (धन्यबाद)',
+    'thank you': 'Dhanyabad (धन्यबाद)',
+    'thanks': 'Dhanyabad (धन्यबाद)',
+    'पानी': 'Pani (पानी)',
+    'water': 'Pani (पानी)',
+    'तुम कैसे हो': 'Tui kemne achis? (तोए केसन आही?)',
+    'how are you': 'Tui kemne achis? (तोए केसन आही?)',
+    'मेरा नाम': 'Mor nam (मोर नाम)',
+    'my name': 'Mor nam (मोर नाम)'
   }
 };
 
@@ -85,26 +148,31 @@ const languageData = [
 // Utility selector helper
 const $ = (id) => document.getElementById(id);
 
-const hindiText = $('hindiText');
 const sourceLanguage = $('sourceLanguage');
+const hindiText = $('hindiText');
 const targetLanguage = $('targetLanguage');
 const translatedText = $('translatedText');
 const resultLabel = $('resultLabel');
+const inputCardLabel = $('inputCardLabel');
+const inputTryNote = $('inputTryNote');
 let soundEnabled = true;
 
 // Render Language Adventure Grid
-$('languageGrid').innerHTML = languageData.map(([name, type, sticker, color]) => `
-  <article class="lang-card ${color}">
-    <span class="sticker">${sticker}</span>
-    <h3>${name}</h3>
-    <p>${type}</p>
-    <button data-language="${name}">Explore words →</button>
-  </article>
-`).join('');
+if ($('languageGrid')) {
+  $('languageGrid').innerHTML = languageData.map(([name, type, sticker, color]) => `
+    <article class="lang-card ${color}">
+      <span class="sticker">${sticker}</span>
+      <h3>${name}</h3>
+      <p>${type}</p>
+      <button data-language="${name}">Explore words →</button>
+    </article>
+  `).join('');
+}
 
 // Toast Notification
 function toast(message) {
   const box = $('toast');
+  if (!box) return;
   box.textContent = message;
   box.classList.add('show');
   clearTimeout(window.toastTimer);
@@ -193,7 +261,9 @@ async function translate() {
   }
 
   // Fallback to phrasebook if network is unavailable
-  const exact = phrasebook[targetLanguage.value] ? phrasebook[targetLanguage.value][word] : null;
+  const normKey = word.toLowerCase();
+  const exact = (phrasebook[targetLanguage.value] && (phrasebook[targetLanguage.value][word] || phrasebook[targetLanguage.value][normKey])) || null;
+
   if (exact) {
     translatedText.textContent = exact;
     translatedText.classList.remove('placeholder');
@@ -264,27 +334,58 @@ hindiText.addEventListener('keydown', (e) => {
   }
 });
 
+// Source Language Dropdown Change
 if (sourceLanguage) {
-  sourceLanguage.addEventListener('change', translate);
+  sourceLanguage.addEventListener('change', () => {
+    const src = sourceLanguage.value;
+    if (src === 'eng' || src === 'English') {
+      if (inputCardLabel) inputCardLabel.textContent = 'Write in English ✍️';
+      if (inputTryNote) inputTryNote.textContent = 'Try: Hello, Thank you, Water';
+      hindiText.placeholder = 'e.g.: Hello, Water, Thank you...';
+      if (hindiText.value.trim() === 'नमस्ते' || !hindiText.value.trim()) {
+        hindiText.value = 'Hello';
+      }
+    } else if (src === 'hin' || src === 'Hindi') {
+      if (inputCardLabel) inputCardLabel.textContent = 'Write in Hindi ✍️';
+      if (inputTryNote) inputTryNote.textContent = 'Try: नमस्ते, धन्यवाद, पानी';
+      hindiText.placeholder = 'जैसे: नमस्ते, पानी, धन्यवाद...';
+      if (hindiText.value.trim() === 'Hello' || !hindiText.value.trim()) {
+        hindiText.value = 'नमस्ते';
+      }
+    } else {
+      if (inputCardLabel) inputCardLabel.textContent = 'Write in Hindi / English / Hinglish ✍️';
+      if (inputTryNote) inputTryNote.textContent = 'Try: नमस्ते, Water, Ped, Mera naam';
+      hindiText.placeholder = 'जैसे: नमस्ते, Water is life, Mera naam Dev hai...';
+    }
+    translate();
+  });
 }
+
 targetLanguage.addEventListener('change', translate);
 
-$('speakInput').addEventListener('click', () => speak(hindiText.value, 'hi-IN'));
+$('speakInput').addEventListener('click', () => {
+  const isEng = sourceLanguage && (sourceLanguage.value === 'eng' || sourceLanguage.value === 'English');
+  speak(hindiText.value, isEng ? 'en-US' : 'hi-IN');
+});
+
 $('speakResult').addEventListener('click', () => speak(translatedText.textContent));
 
 $('saveWord').addEventListener('click', () => toast('⭐ Saved! Your word collection is growing.'));
+
+// Swap Button (Toggle between Hindi and English source)
 $('swapBtn').addEventListener('click', () => {
-  if (sourceLanguage && sourceLanguage.value === 'auto') {
+  if (!sourceLanguage) return;
+  if (sourceLanguage.value === 'hin' || sourceLanguage.value === 'Hindi') {
     sourceLanguage.value = 'eng';
-    toast('Source set to English.');
-  } else if (sourceLanguage && sourceLanguage.value === 'eng') {
-    sourceLanguage.value = 'hinglish';
-    toast('Source set to Hinglish.');
-  } else if (sourceLanguage) {
-    sourceLanguage.value = 'auto';
-    toast('Source set to Auto-Detect.');
+    toast('Source language: English (अंग्रेज़ी)');
+  } else if (sourceLanguage.value === 'eng' || sourceLanguage.value === 'English') {
+    sourceLanguage.value = 'hin';
+    toast('Source language: Hindi (हिन्दी)');
+  } else {
+    sourceLanguage.value = 'eng';
+    toast('Source language: English (अंग्रेज़ी)');
   }
-  translate();
+  sourceLanguage.dispatchEvent(new Event('change'));
 });
 
 $('soundToggle').addEventListener('click', function() {
