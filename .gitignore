@@ -2,12 +2,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
+.Python
 
 # Distribution / packaging
-.Python
 build/
 develop-eggs/
 dist/
@@ -30,9 +28,26 @@ venv/
 ENV/
 env/
 
-# Environment variables
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Databases & Media
+*.db
+*.sqlite3
+data/media/*
+!data/media/.gitkeep
+data/packs/*
+!data/packs/.gitkeep
+
+# Environments & IDEs
 .env
 .env.local
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # macOS files
 .DS_Store

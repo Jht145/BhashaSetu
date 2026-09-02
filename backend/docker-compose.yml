@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: bhashasetu_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://bhashasetu:jharkhand_sih2026@postgres:5432/bhashasetu_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=bhashasetu-super-secret-key-for-jwt-signing-jharkhand-sih2026
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: bhashasetu_postgres
+    environment:
+      - POSTGRES_USER=bhashasetu
+      - POSTGRES_PASSWORD=jharkhand_sih2026
+      - POSTGRES_DB=bhashasetu_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: bhashasetu_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:

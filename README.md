@@ -1,24 +1,40 @@
 # 🌉 भाषा सेतु (BhashaSetu)
 
-> **Hindi to Tribal & Regional Languages Translation & Learning Web App**  
-> Designed with love for children, students, and curious language enthusiasts!
+> **AI-Powered Vernacular Pedagogy Engine & Duplex Translation Layer**  
+> *Project Code: SIH26042 | Category: Smart Education / Software*  
+> *Target Region: Low-resource schools in Jharkhand (Offline-First Android + Web Portal)*
 
 ---
 
-## 🌟 Supported Languages
+## 🌟 Overview
 
-### 🌲 5 Tribal Languages of Jharkhand / Central & Eastern India
-1. **संताली (Santhali / ᱥᱟᱱᱛᱟᱲᱤ)** — Austroasiatic (Munda), with **Ol Chiki (ᱚᱞ ᱪᱤᱠᱤ)** script + Devanagari + Phonetics.
-2. **मुंडारी (Mundari)** — Austroasiatic (Munda), Devanagari + Phonetics.
-3. **हो (Ho / 𑢹𑣉)** — Austroasiatic (Munda), with **Warang Citi (𑢹𑣗𑢭 𑢔𑢫𑢵𑢸)** script + Devanagari + Phonetics.
-4. **कुड़ुख़ / उरांव (Kurukh / Oraon)** — Dravidian, with **Tolong Siki (ᱛᱚᱞᱚᱝ ᱥᱤᱠᱤ)** + Devanagari + Phonetics.
-5. **खड़िया (Kharia)** — Austroasiatic (Munda), Devanagari + Phonetics.
+In linguistically diverse states like Jharkhand, primary school children face high dropout rates and low comprehension because the medium of instruction often does not match their mother tongue. 
 
-### 🌾 4 Regional Languages
-6. **खोरठा (Khortha)** — Indo-Aryan, Devanagari + Phonetics.
-7. **नागपुरी / सादरी (Nagpuri / Sadri)** — Indo-Aryan, Devanagari + Phonetics.
-8. **पंचपरगनिया (Panchpargania)** — Indo-Aryan, Devanagari + Phonetics.
-9. **कुड़माली (Kurmali)** — Indo-Aryan, Devanagari + Phonetics.
+**BhashaSetu** provides:
+1. **Vernacular Pedagogy Engine:** Converts standard NCERT/JCERT curricula into culturally grounded metaphors (e.g. Sarhul, Karma, Sal tree) paired with synchronized audio and text.
+2. **Duplex Classroom Translation Layer:** Bi-directional Speech-to-Speech (S2S) and Speech-to-Text (S2T) between standard Hindi/English and tribal languages.
+3. **Native Script Engine (Ol Chiki):** Embedded Unicode engine with instant dynamic script switching (Devanagari <-> Ol Chiki <-> Latin).
+4. **Offline-First Delta Sync:** Compressed offline concept packs (< 50MB) and queued Android WorkManager delta synchronization.
+5. **Human-in-the-Loop (HITL) Linguist Portal:** Language experts verify, score, and correct automated translations to generate active learning LoRA datasets.
+6. **Interactive Web App & Learning Arena:** Child-friendly bilingual learning platform with visual dictionaries, quizzes, stories, and speech synthesis.
+
+---
+
+## 🌐 Supported Languages & Scripts Matrix
+
+| Language | Code | Type | Native Script | Supported Scripts |
+| --- | --- | --- | --- | --- |
+| **Santhali** | `sat` | Tribal | **Ol Chiki (ᱚᱞ ᱪᱤᱠᱤ)** | Ol Chiki, Devanagari, Latin |
+| **Mundari** | `unr` | Tribal | Devanagari / Mundari Bani | Devanagari, Latin |
+| **Ho** | `hoc` | Tribal | Warang Citi | Warang Citi, Devanagari, Latin |
+| **Kurukh (Oraon)** | `kru` | Tribal | Tolong Siki | Tolong Siki, Devanagari, Latin |
+| **Kharia** | `khr` | Tribal | Devanagari | Devanagari, Latin |
+| **Khortha** | `kht` | Regional | Devanagari | Devanagari |
+| **Nagpuri (Sadri)** | `sck` | Regional | Devanagari | Devanagari |
+| **Panchpargania** | `tdb` | Regional | Devanagari | Devanagari |
+| **Kurmali** | `kyw` | Regional | Devanagari | Devanagari |
+| **Hindi** | `hin` | Bridge | Devanagari | Devanagari |
+| **English** | `eng` | Bridge | Latin | Latin |
 
 ---
 
@@ -42,23 +58,34 @@
 
 ## 🚀 How to Run
 
-1. **Install Dependencies** (FastAPI and Uvicorn):
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 1. Web Application & Frontend
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-2. **Launch Application**:
-   ```bash
-   python3 run.py
-   ```
+# Launch Application
+python3 run.py
+```
+Navigate to [http://localhost:8000](http://localhost:8000).
 
-3. **Open Web Browser**:
-   Navigate to [http://localhost:8000](http://localhost:8000).
+### 2. Backend API Service
+```bash
+cd backend
+pip install -r requirements.txt
+python -m scripts.seed_data
+uvicorn app.main:app --reload --port 8000
+```
+- **Swagger UI:** `http://localhost:8000/docs`
+- **ReDoc:** `http://localhost:8000/redoc`
 
 ---
 
-## 🧪 Running Unit Tests
+## 🧪 Running Tests
 
 ```bash
+# Translation test suite
 PYTHONPATH=. python3 backend/tests/test_translation.py
+
+# Backend pytest suite
+cd backend && pytest -v
 ```
